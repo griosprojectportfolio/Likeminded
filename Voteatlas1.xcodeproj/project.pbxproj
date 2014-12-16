@@ -1,0 +1,471 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		11DD18CE1A407B9100781035 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18CD1A407B9100781035 /* Foundation.framework */; };
+		11DD18D01A407B9100781035 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18CF1A407B9100781035 /* CoreGraphics.framework */; };
+		11DD18D21A407B9100781035 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18D11A407B9100781035 /* UIKit.framework */; };
+		11DD18D81A407B9100781035 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 11DD18D61A407B9100781035 /* InfoPlist.strings */; };
+		11DD18DA1A407B9100781035 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DD18D91A407B9100781035 /* main.m */; };
+		11DD18DE1A407B9100781035 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DD18DD1A407B9100781035 /* AppDelegate.m */; };
+		11DD18E11A407B9100781035 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11DD18DF1A407B9100781035 /* Main.storyboard */; };
+		11DD18E41A407B9100781035 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DD18E31A407B9100781035 /* ViewController.m */; };
+		11DD18E61A407B9100781035 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11DD18E51A407B9100781035 /* Images.xcassets */; };
+		11DD18ED1A407B9200781035 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18EC1A407B9200781035 /* XCTest.framework */; };
+		11DD18EE1A407B9200781035 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18CD1A407B9100781035 /* Foundation.framework */; };
+		11DD18EF1A407B9200781035 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18D11A407B9100781035 /* UIKit.framework */; };
+		11DD18F71A407B9200781035 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 11DD18F51A407B9200781035 /* InfoPlist.strings */; };
+		11DD18F91A407B9200781035 /* Voteatlas1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DD18F81A407B9200781035 /* Voteatlas1Tests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		11DD18F01A407B9200781035 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 11DD18C21A407B9100781035 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 11DD18C91A407B9100781035;
+			remoteInfo = Voteatlas1;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		11DD18CA1A407B9100781035 /* Voteatlas1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Voteatlas1.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		11DD18CD1A407B9100781035 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		11DD18CF1A407B9100781035 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		11DD18D11A407B9100781035 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		11DD18D51A407B9100781035 /* Voteatlas1-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Voteatlas1-Info.plist"; sourceTree = "<group>"; };
+		11DD18D71A407B9100781035 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		11DD18D91A407B9100781035 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		11DD18DB1A407B9100781035 /* Voteatlas1-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Voteatlas1-Prefix.pch"; sourceTree = "<group>"; };
+		11DD18DC1A407B9100781035 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		11DD18DD1A407B9100781035 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		11DD18E01A407B9100781035 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		11DD18E21A407B9100781035 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		11DD18E31A407B9100781035 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		11DD18E51A407B9100781035 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		11DD18EB1A407B9200781035 /* Voteatlas1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Voteatlas1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		11DD18EC1A407B9200781035 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		11DD18F41A407B9200781035 /* Voteatlas1Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Voteatlas1Tests-Info.plist"; sourceTree = "<group>"; };
+		11DD18F61A407B9200781035 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		11DD18F81A407B9200781035 /* Voteatlas1Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Voteatlas1Tests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		11DD18C71A407B9100781035 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11DD18D01A407B9100781035 /* CoreGraphics.framework in Frameworks */,
+				11DD18D21A407B9100781035 /* UIKit.framework in Frameworks */,
+				11DD18CE1A407B9100781035 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		11DD18E81A407B9200781035 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11DD18ED1A407B9200781035 /* XCTest.framework in Frameworks */,
+				11DD18EF1A407B9200781035 /* UIKit.framework in Frameworks */,
+				11DD18EE1A407B9200781035 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		11DD18C11A407B9100781035 = {
+			isa = PBXGroup;
+			children = (
+				11DD18D31A407B9100781035 /* Voteatlas1 */,
+				11DD18F21A407B9200781035 /* Voteatlas1Tests */,
+				11DD18CC1A407B9100781035 /* Frameworks */,
+				11DD18CB1A407B9100781035 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		11DD18CB1A407B9100781035 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				11DD18CA1A407B9100781035 /* Voteatlas1.app */,
+				11DD18EB1A407B9200781035 /* Voteatlas1Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		11DD18CC1A407B9100781035 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				11DD18CD1A407B9100781035 /* Foundation.framework */,
+				11DD18CF1A407B9100781035 /* CoreGraphics.framework */,
+				11DD18D11A407B9100781035 /* UIKit.framework */,
+				11DD18EC1A407B9200781035 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		11DD18D31A407B9100781035 /* Voteatlas1 */ = {
+			isa = PBXGroup;
+			children = (
+				11DD18DC1A407B9100781035 /* AppDelegate.h */,
+				11DD18DD1A407B9100781035 /* AppDelegate.m */,
+				11DD18DF1A407B9100781035 /* Main.storyboard */,
+				11DD18E21A407B9100781035 /* ViewController.h */,
+				11DD18E31A407B9100781035 /* ViewController.m */,
+				11DD18E51A407B9100781035 /* Images.xcassets */,
+				11DD18D41A407B9100781035 /* Supporting Files */,
+			);
+			path = Voteatlas1;
+			sourceTree = "<group>";
+		};
+		11DD18D41A407B9100781035 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				11DD18D51A407B9100781035 /* Voteatlas1-Info.plist */,
+				11DD18D61A407B9100781035 /* InfoPlist.strings */,
+				11DD18D91A407B9100781035 /* main.m */,
+				11DD18DB1A407B9100781035 /* Voteatlas1-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		11DD18F21A407B9200781035 /* Voteatlas1Tests */ = {
+			isa = PBXGroup;
+			children = (
+				11DD18F81A407B9200781035 /* Voteatlas1Tests.m */,
+				11DD18F31A407B9200781035 /* Supporting Files */,
+			);
+			path = Voteatlas1Tests;
+			sourceTree = "<group>";
+		};
+		11DD18F31A407B9200781035 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				11DD18F41A407B9200781035 /* Voteatlas1Tests-Info.plist */,
+				11DD18F51A407B9200781035 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		11DD18C91A407B9100781035 /* Voteatlas1 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11DD18FC1A407B9200781035 /* Build configuration list for PBXNativeTarget "Voteatlas1" */;
+			buildPhases = (
+				11DD18C61A407B9100781035 /* Sources */,
+				11DD18C71A407B9100781035 /* Frameworks */,
+				11DD18C81A407B9100781035 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Voteatlas1;
+			productName = Voteatlas1;
+			productReference = 11DD18CA1A407B9100781035 /* Voteatlas1.app */;
+			productType = "com.apple.product-type.application";
+		};
+		11DD18EA1A407B9200781035 /* Voteatlas1Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11DD18FF1A407B9200781035 /* Build configuration list for PBXNativeTarget "Voteatlas1Tests" */;
+			buildPhases = (
+				11DD18E71A407B9200781035 /* Sources */,
+				11DD18E81A407B9200781035 /* Frameworks */,
+				11DD18E91A407B9200781035 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				11DD18F11A407B9200781035 /* PBXTargetDependency */,
+			);
+			name = Voteatlas1Tests;
+			productName = Voteatlas1Tests;
+			productReference = 11DD18EB1A407B9200781035 /* Voteatlas1Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		11DD18C21A407B9100781035 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = Voteatlas;
+				TargetAttributes = {
+					11DD18EA1A407B9200781035 = {
+						TestTargetID = 11DD18C91A407B9100781035;
+					};
+				};
+			};
+			buildConfigurationList = 11DD18C51A407B9100781035 /* Build configuration list for PBXProject "Voteatlas1" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 11DD18C11A407B9100781035;
+			productRefGroup = 11DD18CB1A407B9100781035 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				11DD18C91A407B9100781035 /* Voteatlas1 */,
+				11DD18EA1A407B9200781035 /* Voteatlas1Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		11DD18C81A407B9100781035 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11DD18E61A407B9100781035 /* Images.xcassets in Resources */,
+				11DD18D81A407B9100781035 /* InfoPlist.strings in Resources */,
+				11DD18E11A407B9100781035 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		11DD18E91A407B9200781035 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11DD18F71A407B9200781035 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		11DD18C61A407B9100781035 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11DD18E41A407B9100781035 /* ViewController.m in Sources */,
+				11DD18DE1A407B9100781035 /* AppDelegate.m in Sources */,
+				11DD18DA1A407B9100781035 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		11DD18E71A407B9200781035 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11DD18F91A407B9200781035 /* Voteatlas1Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		11DD18F11A407B9200781035 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 11DD18C91A407B9100781035 /* Voteatlas1 */;
+			targetProxy = 11DD18F01A407B9200781035 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		11DD18D61A407B9100781035 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				11DD18D71A407B9100781035 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		11DD18DF1A407B9100781035 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				11DD18E01A407B9100781035 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		11DD18F51A407B9200781035 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				11DD18F61A407B9200781035 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		11DD18FA1A407B9200781035 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		11DD18FB1A407B9200781035 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		11DD18FD1A407B9200781035 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Voteatlas1/Voteatlas1-Prefix.pch";
+				INFOPLIST_FILE = "Voteatlas1/Voteatlas1-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		11DD18FE1A407B9200781035 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Voteatlas1/Voteatlas1-Prefix.pch";
+				INFOPLIST_FILE = "Voteatlas1/Voteatlas1-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		11DD19001A407B9200781035 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Voteatlas1.app/Voteatlas1";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Voteatlas1/Voteatlas1-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Voteatlas1Tests/Voteatlas1Tests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		11DD19011A407B9200781035 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Voteatlas1.app/Voteatlas1";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Voteatlas1/Voteatlas1-Prefix.pch";
+				INFOPLIST_FILE = "Voteatlas1Tests/Voteatlas1Tests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		11DD18C51A407B9100781035 /* Build configuration list for PBXProject "Voteatlas1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11DD18FA1A407B9200781035 /* Debug */,
+				11DD18FB1A407B9200781035 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		11DD18FC1A407B9200781035 /* Build configuration list for PBXNativeTarget "Voteatlas1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11DD18FD1A407B9200781035 /* Debug */,
+				11DD18FE1A407B9200781035 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		11DD18FF1A407B9200781035 /* Build configuration list for PBXNativeTarget "Voteatlas1Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11DD19001A407B9200781035 /* Debug */,
+				11DD19011A407B9200781035 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 11DD18C21A407B9100781035 /* Project object */;
+}
