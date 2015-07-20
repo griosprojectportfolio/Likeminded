@@ -10,4 +10,6 @@
 
 @implementation Belief
 
+@synthesize beliefId, statement, hasImage, hasLock, hasOppose, hasSuppose,hasVideo, hasYouTubeUrl, dictDisposition, languageId, languageName, isShowAuther, weblink;
+
 @end

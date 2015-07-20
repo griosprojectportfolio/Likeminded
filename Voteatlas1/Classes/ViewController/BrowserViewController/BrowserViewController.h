@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface BrowserViewController : UIViewController
+@interface BrowserViewController : UIViewController <UIWebViewDelegate>
 
+@property (nonatomic, strong) IBOutlet UIWebView *webVwBrowser;
+@property (nonatomic, strong) NSString *strBrowseUrl;
 @end

@@ -10,31 +10,45 @@
 
 @implementation SharingActivityProvider {
 
+  NSString *strStatement;
+  NSURL *urlPath;
+}
+
+- (id)initwithText:(NSString *)statement withUrl:(NSURL *)url {
+  if ([super initWithPlaceholderItem:statement]) {
+    strStatement = statement;
+    urlPath = url;
+  }
+  return self;
 }
 
 - (id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(NSString *)activityType {
     // Log out the activity type that we are sharing with
     NSLog(@"%@", activityType);
-
-    // Create the default sharing string
-    NSString *shareString = @"CapTech is a great place to work";
-
+  NSString *strCombineString;
     // customize the sharing string for facebook, twitter, weibo, and google+
     if ([activityType isEqualToString:UIActivityTypePostToFacebook]) {
-        shareString = [NSString stringWithFormat:@"Attention Facebook: %@", shareString];
+      strCombineString = [NSString stringWithFormat:@"%@\n%@", strStatement, urlPath.absoluteString];;
     } else if ([activityType isEqualToString:UIActivityTypePostToTwitter]) {
-        shareString = [NSString stringWithFormat:@"Attention Twitter: %@", shareString];
-    } else if ([activityType isEqualToString:UIActivityTypePostToWeibo]) {
-        shareString = [NSString stringWithFormat:@"Attention Weibo: %@", shareString];
-    } else if ([activityType isEqualToString:@"com.captech.googlePlusSharing"]) {
-        shareString = [NSString stringWithFormat:@"Attention Google+: %@", shareString];
+        strCombineString = [NSString stringWithFormat:@"%@\n%@", strStatement, urlPath.absoluteString];
+        if (strCombineString.length > 117) {
+        strCombineString = [NSString stringWithFormat:@"%@\n%@", [strStatement substringToIndex:(117-urlPath.absoluteString.length)], urlPath.absoluteString];
+      }
+    } else {
+      strCombineString = [NSString stringWithFormat:@"%@\n%@", strStatement, urlPath.absoluteString];;
     }
 
-    return shareString;
+    return strCombineString;
 }
 
 - (id)activityViewControllerPlaceholderItem:(UIActivityViewController *)activityViewController {
     return @"";
+}
+
+
+- (void)prepareWithActivityItems:(NSArray *)activityItems {
+
+  NSLog(@"%@", activityItems);
 }
 
 @end

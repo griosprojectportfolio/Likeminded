@@ -13,21 +13,31 @@
 
 @protocol CustomeTableViewDelegate <NSObject>
 
+@optional
+
 - (void)sharebtnTapped:(Belief*)belief;
-- (void)mapbtnTapped:(Belief*)belief;
+- (void)mapbtnTapped:(Belief*)belief withCellTag:(NSInteger)tag;
 - (void)translatebtnTapped:(Belief*)belief;
 - (void)keepmePostedBtnTapped:(Belief *)belief withTag:(NSInteger)tag;
 - (void)flagBtnTapped:(Belief *)belief;
 - (void)supportOpposeBtnTapped;
+- (void)videoBtnTapped:(Belief *)belief;
+- (void)navigateToCommentBtnTapped:(Belief *)belief;
+- (void)fileItBtnTapped:(NSInteger)cellTag;
+- (void)profileBtnTapped:(Belief *)belief;
+- (void)linkBtnTapped:(Belief *)belief;
 
 @end
 
-@interface TableViewCell : UITableViewCell <CustomButtonsDelegate> {
+@interface TableViewCell : UITableViewCell <CustomButtonsDelegate, UIGestureRecognizerDelegate> {
     NSURL *_urlToLoad;
     IBOutlet UIButton *btnPlay;
-    IBOutlet UIImageView *imgVwDiscloser;
+    IBOutlet UIButton *btnDiscloser;
     IBOutlet UIButton *btnFlag;
     IBOutlet UIButton *btnTranslation;
+    IBOutlet UILabel *lblLine;
+    IBOutlet UILabel *lblLink;
+    IBOutlet UIButton *btnLink;
     UIVisualEffectView *effectView;
 }
 
@@ -46,14 +56,11 @@
 
 @property (nonatomic, strong) IBOutlet UIButton *transBtn;
 @property (nonatomic, strong) IBOutlet UIButton *flageBtn;
+
 @property (nonatomic, strong) IBOutlet CustomButtonsView *customVwOfBtns;
 @property (nonatomic, strong) Belief *objBelief;
 
 @property (unsafe_unretained)id<CustomeTableViewDelegate> delegate;
-
-
-- (IBAction)transBtnTapped:(id)sender;
-- (IBAction)flageBtnTapped:(id)sender;
 
 - (void)setValueInTableVw:(Belief*)belief withVwController:(TableViewController*)vwController forRow:(NSInteger)row withCellWidth:(CGFloat)width withLaguagleId:(NSNumber*)languageId;
 

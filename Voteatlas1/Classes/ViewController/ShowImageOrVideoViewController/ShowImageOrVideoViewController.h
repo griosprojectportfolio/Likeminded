@@ -7,15 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UserInfo.h"
+#import "Belief.h"
 #import "UIImageView+WebCache.h"
+
 
 @interface ShowImageOrVideoViewController : UIViewController
 
-@property (nonatomic, strong) UserInfo *userInfo;
+@property (nonatomic, strong) Belief *belief;
 @property (nonatomic, strong) IBOutlet UIImageView *imgVwLargeImg;
 @property (nonatomic, strong) IBOutlet UIScrollView *scrollVwImg;
 @property (nonatomic, strong) IBOutlet UIWebView *webViewVideo;
 @property (nonatomic, strong) UIImage *imgLarge;
+
 
 @end

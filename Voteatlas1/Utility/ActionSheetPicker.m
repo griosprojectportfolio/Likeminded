@@ -65,23 +65,27 @@
 }
 
 - (id)initForDataWithContainingView:(UIView *)aView data:(NSArray *)data selectedIndex:(NSInteger)selectedIndex target:(id)target action:(SEL)action title:(NSString *)title width:(float)widthComponent {
-	
-    if ([self initWithContainingView:aView target:target action:action] != nil) {
-		self.data = data;
-        self.componentWidth = widthComponent;
-		self.selectedIndex = selectedIndex;
-		self.title = title;
-	}
-	return self;
+
+    if ((self = [super init]) != nil) {
+        if ([self initWithContainingView:aView target:target action:action] != nil) {
+            self.data = data;
+            self.componentWidth = widthComponent;
+            self.selectedIndex = selectedIndex;
+            self.title = title;
+        }
+    }
+    return self;
 }
 
 - (id)initForDateWithContainingView:(UIView *)aView datePickerMode:(UIDatePickerMode)datePickerMode selectedDate:(NSDate *)selectedDate target:(id)target action:(SEL)action title:(NSString *)title {
-    
-	if ([self initWithContainingView:aView target:target action:action] != nil) {
-		self.datePickerMode = datePickerMode;
-		self.selectedDate = selectedDate;
-		self.title = title;
-	}
+
+    if ((self = [super init]) != nil) {
+        if ([self initWithContainingView:aView target:target action:action] != nil) {
+            self.datePickerMode = datePickerMode;
+            self.selectedDate = selectedDate;
+            self.title = title;
+        }
+    }
 	return self;
 }
 

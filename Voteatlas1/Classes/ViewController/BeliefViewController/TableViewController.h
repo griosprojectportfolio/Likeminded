@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <MediaPlayer/MediaPlayer.h>
+#import "HCYoutubeParser.h"
 
 @interface TableViewController : UIViewController <UISearchBarDelegate,UIActionSheetDelegate,MFMailComposeViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate> {
 
@@ -16,11 +18,14 @@
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapVwBelief;
-@property (nonatomic, strong)IBOutlet UITableView *tbleVwBelief;
-@property (nonatomic, strong) IBOutlet UIView *vwMap;
-@property(nonatomic,strong)NSString *userID;
+@property (nonatomic, strong) IBOutlet UITableView *tbleVwBelief;
+@property (nonatomic, strong) IBOutlet UITableView *tbleVwAutoCorrection;
 
-- (IBAction)tapRightNaviButton:(id)sender;
+@property (nonatomic, strong) IBOutlet UIView *vwMap;
+@property (nonatomic, strong) NSString *userID;
+@property (nonatomic, strong) UIButton *btnSlider;
+@property (nonatomic, strong) MPMoviePlayerViewController *mpvc;
+@property (nonatomic) NSInteger schemaBeliefId;
 
 - (void)profileBtnTapped:(id)sender;
 

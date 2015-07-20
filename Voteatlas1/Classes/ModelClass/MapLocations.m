@@ -10,4 +10,6 @@
 
 @implementation MapLocations
 
+@synthesize latitute, longitute;
+
 @end

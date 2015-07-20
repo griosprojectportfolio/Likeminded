@@ -7,7 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DraftCell.h"
+#import "Draft.h"
 
-@interface DraftViewController : UIViewController
+@protocol DraftDelegates <NSObject>
+
+- (void)showDraftInfo:(Draft *)draft;
+
+@end
+
+@interface DraftViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+
+@property (nonatomic, strong) IBOutlet UITableView *tbleVwDraft;
+@property (nonatomic) BOOL isFromSlider;
+@property (nonatomic, strong) NSMutableArray *arryDraft;
+@property (unsafe_unretained)id <DraftDelegates>delegate;
 
 @end

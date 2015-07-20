@@ -13,4 +13,59 @@
 #ifdef __OBJC__
   #import <UIKit/UIKit.h>
   #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
+#import "AppDelegate.h"
+#import <Social/Social.h>
+#import <MessageUI/MessageUI.h>
+#import"AFNetworking.h"
+#import "AppApi.h"
+#import "M13Checkbox.h"
+#import "Reachability.h"
+#import "CustomTextField.h"
+#import "UIColor+CustomColor.h"
+
+#define MR_SHORTHAND
+#import "CoreData+MagicalRecord.h"
+#import "ConstantClass.h"
+#import <MagicalRecord/MagicalRecord.h>
+#import <MagicalRecord.h>
+
+#define sharedAppDelegate ((AppDelegate*)[[UIApplication sharedApplication] delegate])
+
+#define TWITTER_USER_PROFILE    @"https://api.twitter.com/1.1/account/verify_credentials.json"
+#define FB_APP_ID @"354798871389446"//940469709317245
+
+#define GOOGLE_PLUS_CLIEND_ID             @"577720510948-9hccb3k19l1ac5ph6bevhu6safasn10j.apps.googleusercontent.com" 
+#define GOOGLE_PLUS_SECRET_ID             @"pZ-PBS6rDARtBFFhBkcOmY7Q"
+#define GOOGLE_PLUS_CALL_BACK_URL                     @"http://localhost"
+#define GOOGLE_PLUS_SCOPE                             @"https://www.googleapis.com/auth/userinfo.email"
+#define GOOGLE_PLUS_VIVIBLE_ACTION                    @"http://schemas.google.com/AddActivity"
+
+
+#define IS_IOS7        (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) ? YES : NO)
+#define IS_IOS8        (([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) ? YES : NO)
+
+
+#define SCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
+#define SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
+#define SCREEN_MAX_LENGTH (MAX(SCREEN_WIDTH, SCREEN_HEIGHT))
+#define SCREEN_MIN_LENGTH (MIN(SCREEN_WIDTH, SCREEN_HEIGHT))
+
+#define IS_IPHONE_4_OR_LESS (SCREEN_MAX_LENGTH < 568.0)
+#define IS_IPHONE_5 (SCREEN_MAX_LENGTH == 568.0)
+#define IS_IPHONE_6 (SCREEN_MAX_LENGTH == 667.0)
+#define IS_IPHONE_6P (SCREEN_MAX_LENGTH == 736.0)
+
+
+#define ERROR_CONNECTING @"Please check internet connection."
+#define FB_CONNECT_ERROR @"The accounts must be setup under settings. After login from settings again tapped this button to connect through Facebook via app."
+#define TWITTER_CONNECT_ERROR @"The accounts must be setup under settings. After login from settings again tapped this button to connect through Twitter via app."
+
+#define ERROR @"Error"
+#define UNAUTHORIZED_USER @"User not authorized."
+
+#define SEARCH_KEYS @"searchParam"
+#define AUTH_TOKEN  @"auth-Token"
+
+
 #endif

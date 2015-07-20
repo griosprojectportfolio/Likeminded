@@ -10,4 +10,8 @@
 
 @interface Comment : NSObject
 
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *comment;
+@property (nonatomic, strong) NSString *userName;
+
 @end

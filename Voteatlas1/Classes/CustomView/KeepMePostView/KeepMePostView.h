@@ -8,6 +8,22 @@
 
 #import <UIKit/UIKit.h>
 
-@interface KeepMePostView : UIView
+@protocol keepMePostedDelegate <NSObject>
+
+- (void)cancelBtnTapped;
+- (void)sendKeepMePosted:(NSInteger)duration;
+
+@end
+
+@interface KeepMePostView : UIView {
+
+    UIButton *btnDays;
+    UIButton *btnweek;
+    UIButton *btnMonth;
+
+    NSInteger duration;
+}
+
+@property (unsafe_unretained)id <keepMePostedDelegate>delegate;
 
 @end

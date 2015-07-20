@@ -7,12 +7,12 @@
 //
 
 #import "ShowImageOrVideoViewController.h"
-#import "FXPageControl.h"
 
 @interface ShowImageOrVideoViewController () <UIWebViewDelegate, NSURLConnectionDelegate> {
 
     NSMutableData *_responseData;
     NSURLConnection *conn;
+    NSString *videoUrl;
 }
 
 @end
@@ -34,15 +34,6 @@
 
     [super viewDidLoad];
 
-    NSArray *arryVws = self.navigationController.navigationBar.subviews;
-
-    for (UIView *vw in arryVws) {
-        if ([vw isKindOfClass:[FXPageControl class]]) {
-            [vw setHidden:YES];
-        }
-    }
-
-    self.navigationItem.title = @"ShowDetails";
     self.navigationController.navigationBarHidden = NO;
     [self.webViewVideo setHidden:YES];
     self.navigationController.navigationBar.translucent = YES;
@@ -51,48 +42,32 @@
     UIButton *btnPlay = [UIButton buttonWithType:UIButtonTypeCustom];
     [btnPlay setImage:[UIImage imageNamed:@"play-btn.png"] forState:UIControlStateNormal];
     btnPlay.frame = self.imgVwLargeImg.frame;
-    [btnPlay addTarget:self action:@selector(playBtnTapped) forControlEvents:UIControlEventTouchUpInside];
 
-        //  UIBarButtonItem *barBtnBack = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(backBtnTapped:)];
-        //  self.navigationItem.leftBarButtonItem = barBtnBack;
+    UIBarButtonItem *barBtnBack = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(backBtnTapped:)];
+    barBtnBack.tintColor = [UIColor setCustomColorOfTextField];
+    self.navigationItem.leftBarButtonItem = barBtnBack;
 
-    if ([self.userInfo.type isEqualToString:@"video"]) { // video on web view
+    if (self.belief.hasImage == 1) { // video on web view
+        self.navigationItem.title = @"Show Image";
 
         [self.imgVwLargeImg setHidden:NO];
-        [self.imgVwLargeImg sd_setImageWithURL:[NSURL URLWithString:self.userInfo.postImg]];
-        [self.scrollVwImg addSubview:btnPlay];
-        [self.scrollVwImg bringSubviewToFront:btnPlay];
-    } else {
-        [self.imgVwLargeImg setHidden:NO];
-        if ([self.userInfo.userSocialType isEqualToString:@"Facebook"]) {
-            self.imgVwLargeImg.Image = self.imgLarge;
-        } else {
-            [self.imgVwLargeImg sd_setImageWithURL:[NSURL URLWithString:self.userInfo.postImg] placeholderImage:nil];
-        }
+        [self.imgVwLargeImg sd_setImageWithURL:[NSURL URLWithString:self.self.belief.imageUrl] placeholderImage:nil];
     }
-    self.scrollVwImg.backgroundColor=[UIColor whiteColor];
+
+    self.scrollVwImg.backgroundColor = [UIColor whiteColor];
     self.scrollVwImg.minimumZoomScale = 1.0;
     self.scrollVwImg.maximumZoomScale = 3.0;
     [self.scrollVwImg setZoomScale:1.0];
 }
 
 - (void)didReceiveMemoryWarning {
-
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)playBtnTapped {
-
-    NSURLRequest *urlRequest = [[NSURLRequest alloc]initWithURL:[NSURL URLWithString:self.userInfo.videoUrl]];
-    [self.webViewVideo loadRequest:urlRequest];
-    [self.webViewVideo setHidden:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
     [super viewWillAppear:animated];
-
     [UIApplication sharedApplication].statusBarHidden = NO;
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
 }
@@ -102,15 +77,13 @@
 }
 
 #pragma mark - ImageVwDelegates
-
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
-
     return self.imgVwLargeImg;
 }
 
+#pragma mark - Back Btn tapped
 - (IBAction)backBtnTapped:(id)sender {
-
-    [self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

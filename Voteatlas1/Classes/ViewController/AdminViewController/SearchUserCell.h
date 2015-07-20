@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+
 @interface SearchUserCell : UITableViewCell
+
+@property (nonatomic, strong)IBOutlet UILabel *lblUser;
+
+- (void)setValueOfSearchUser :(NSDictionary *)dict;
 
 @end

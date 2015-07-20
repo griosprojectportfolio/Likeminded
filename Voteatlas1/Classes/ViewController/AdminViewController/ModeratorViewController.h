@@ -10,4 +10,9 @@
 
 @interface ModeratorViewController : UIViewController
 
+@property (nonatomic, strong) IBOutlet UITableView *tbleVwFlag;
+
+- (IBAction)dismissFlag:(id)sender;
+- (IBAction)deleteBelief:(id)sender;
+
 @end

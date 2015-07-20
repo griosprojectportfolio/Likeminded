@@ -24,7 +24,7 @@
     IBOutlet UILabel * lblRelevantHeading;
 
     M13Checkbox *chkAuthor;
-    M13Checkbox *chkPublishStat;
+    M13Checkbox *chkShowOnProfile;
 }
 
 @property(nonatomic,strong)NSString *userID;
@@ -38,6 +38,7 @@
 
 @property(nonatomic,strong)IBOutlet UISwitch *swtPublish;
 @property(nonatomic,strong)IBOutlet UISegmentedControl *segUpload;
+@property(nonatomic,strong)IBOutlet UISegmentedControl *segPublishStatement;
 @property(nonatomic,strong)IBOutlet UIScrollView *vScrollView;
 
 -(IBAction)tappedOKButton:(id)sender;

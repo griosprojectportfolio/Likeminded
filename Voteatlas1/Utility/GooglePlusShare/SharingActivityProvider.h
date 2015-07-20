@@ -8,5 +8,8 @@
 #import <Foundation/Foundation.h>
 
 
-@interface SharingActivityProvider : UIActivityItemProvider
+@interface SharingActivityProvider : UIActivityItemProvider <UIActivityItemSource>
+
+- (id)initwithText:(NSString *)statement withUrl:(NSURL *)url;
+
 @end

@@ -17,6 +17,8 @@
 
 @property (nonatomic, strong) UILabel *lblOppose;
 @property (nonatomic, strong) UILabel *lblSuppose;
+@property (nonatomic, strong) UILabel *lblTotal;
+
 @property (nonatomic, strong) UIImageView *imgVwOuppose;
 @property (nonatomic, strong) UIImageView *imgVwSuppose;
 

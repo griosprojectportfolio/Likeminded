@@ -10,6 +10,8 @@
 #import "Belief.h"
 #import <MapKit/MapKit.h>
 #import "CustomButtonsView.h"
+#import <MediaPlayer/MediaPlayer.h>
+#import "HCYoutubeParser.h"
 
 @interface DetailPageViewController : UIViewController <MFMailComposeViewControllerDelegate, CustomButtonsDelegate, MKMapViewDelegate>{
 
@@ -27,5 +29,6 @@
 @property (nonatomic, strong) IBOutlet CustomButtonsView *customVwOfBtns;
 @property (nonatomic, strong) NSMutableArray *arrySupportLocation;
 @property (nonatomic, strong) NSMutableArray *arryOpposeLocation;
+@property (nonatomic, strong) MPMoviePlayerViewController *mpvc;
 
 @end

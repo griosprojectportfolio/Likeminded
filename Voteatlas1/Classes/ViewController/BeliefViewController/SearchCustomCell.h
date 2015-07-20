@@ -10,4 +10,6 @@
 
 @interface SearchCustomCell : UITableViewCell
 
+@property (nonatomic,strong) IBOutlet UILabel *lblSearch;
+
 @end

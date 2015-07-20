@@ -12,5 +12,10 @@
 
 + (UIImage*)maskImage:(UIImage *)image withMask:(UIImage *)maskImage;
 + (BOOL)checkNetworkConection;
++ (UIImage *)imageAccordingToPhone;
++ (CGFloat)withOfDeviceScreen;
++ (CGRect)sizeOfString :(NSString *)strText withSize :(CGSize)size;
++ (UIImage *)scaleAndRotateImage:(UIImage *)image;
++ (UIImage *)mergeTwoImage:(UIImage*)image1 andImage2:(UIImage *)image2;
 
 @end

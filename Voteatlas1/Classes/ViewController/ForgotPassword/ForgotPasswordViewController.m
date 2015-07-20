@@ -32,22 +32,15 @@
 }
 
 #pragma mark - Default Settings
+/**************************************************************************************************
+ Function to set default settings
+ **************************************************************************************************/
 - (void)defaulUISettings {
 
     UIBarButtonItem *btnBack = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(backBtnTapped)];
     btnBack.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setLeftBarButtonItem:btnBack];
-
-    if (IS_IPHONE_4_OR_LESS) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG4.png"]];
-    } else if (IS_IPHONE_5) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG5.png"]];
-    } else if (IS_IPHONE_6) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6.png"]];
-    } else if (IS_IPHONE_6P) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6Pluse.png"]];
-    }
-
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[ConstantClass imageAccordingToPhone]];
     [self.txtEmailID setCustomImgVw:@"email" withWidth:self.view.frame.size.width - 40];
     self.txtEmailID.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Email" attributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:86/256.0f green:163/256.0f blue:211/256.0f alpha:1.0]}];
     self.txtEmailID.textColor = [UIColor setCustomColorOfTextField];
@@ -71,17 +64,21 @@
 }
 
 #pragma mark - Forgot password Api call
+/**************************************************************************************************
+ Function to call forgot passworg api
+ **************************************************************************************************/
 - (void)handleForgotPasswordApi {
 
     if ([ConstantClass checkNetworkConection] == YES) {
 
+        [self.view endEditing:YES];
         NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
         [dict setObject:self.txtEmailID.text forKey:@"user[email]"];
 
         [self.api callPostUrl:dict method:@"/api/v1/passwords" success:^(AFHTTPRequestOperation *task, id responseObject) {
-            NSLog(@"%@",responseObject);
+            UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:@"Message" message:@"Please check your email for reset password link." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alertVw show];
       } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-          NSLog(@"%@",error);
       }];
     }
 }

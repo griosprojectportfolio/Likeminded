@@ -9,12 +9,23 @@
 #import <UIKit/UIKit.h>
 #import "Comment.h"
 
+@protocol CommentDelegate <NSObject>
+
+- (void)profileBtnTapped:(Comment*)comment;
+
+@end
+
 @interface SupportOpposeCell : UITableViewCell {
 
     IBOutlet UILabel *lblComment;
     IBOutlet UILabel *lblName;
+    IBOutlet UIImageView *imgVwProfile;
+    IBOutlet UIButton *btnProfileImg;
 }
 
-- (void)setValueOfCommentsInTableVw:(Comment *)objComment;
+@property (nonatomic, strong) Comment *objComment;
+@property (unsafe_unretained) id <CommentDelegate>delegate;
+
+- (void)setValueOfCommentsInTableVw:(Comment *)objComment withWidth:(int)width;
 
 @end

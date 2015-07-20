@@ -8,8 +8,11 @@
 
 #import "BelieveViewController.h"
 #import "ActionSheetPicker.h"
+#import "Draft.h"
+#import "DraftViewController.h"
+#import "User.h"
 
-@interface BelieveViewController () <UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>{
+@interface BelieveViewController () <UIAlertViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DraftDelegates>{
 
     int selectedLauguageId;
 
@@ -23,8 +26,10 @@
     NSString *typeOfUploadFile;
     UIActivityIndicatorView *activityIndicator;
     UIView *vwOverlay;
+    NSArray*arrySelectCategory;
     BOOL is_publish;
     BOOL isAuther;
+    User *userObject;
 }
 
 @property (nonatomic, retain) AppApi *api;
@@ -43,7 +48,6 @@
 - (void)viewDidLoad {
 
     [super viewDidLoad];
-    NSLog(@"%@",self.userID);
     self.api = [AppApi sharedClient];
     is_publish = 0;
     isAuther = 0;
@@ -56,6 +60,11 @@
     self.arryLanguageId = [[NSMutableArray alloc]init];
     self.arryCategorybtnList = [[NSMutableArray alloc]init];
     self.arryCategory = [[NSMutableArray alloc]init];
+
+    NSArray *arrFetchedData =[User MR_findAll];
+    userObject = [arrFetchedData objectAtIndex:0];
+
+    is_publish = YES;
 
     [self addActivityIndicator];
 
@@ -81,6 +90,9 @@
 }
 
 #pragma mark - Add Activity indicator
+/**************************************************************************************************
+ Function to add activity indicator
+ **************************************************************************************************/
 - (void)addActivityIndicator {
 
     vwOverlay = [[UIView alloc]initWithFrame:self.view.frame];
@@ -111,23 +123,22 @@
 }
 
 #pragma mark - Set default settings
+/**************************************************************************************************
+ Function to set default settings
+ **************************************************************************************************/
 - (void)defaulUISettings {
 
-    if (IS_IPHONE_4_OR_LESS) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG4.png"]];
-    } else if (IS_IPHONE_5) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG5.png"]];
-    } else if (IS_IPHONE_6) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6.png"]];
-    } else if (IS_IPHONE_6P) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6Pluse.png"]];
-    }
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[ConstantClass imageAccordingToPhone]];
     int txtFieldWidth = self.view.frame.size.width - 40;
 
     UIBarButtonItem *btnBack = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(backBtnTapped)];
     btnBack.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setLeftBarButtonItem:btnBack];
-    
+
+    UIBarButtonItem *btnDrats = [[UIBarButtonItem alloc]initWithTitle:@"Draft" style:UIBarButtonItemStylePlain target:self action:@selector(draftBtnTapped)];
+    btnDrats.tintColor = [UIColor setCustomColorOfTextField];
+    [self.navigationItem setRightBarButtonItem:btnDrats];
+
     [self.txtstatement setCustomImgVw:@"statment" withWidth:txtFieldWidth];
     self.txtstatement.textColor = [UIColor setCustomColorOfTextField];
     self.txtstatement.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Your Statement" attributes:@{NSForegroundColorAttributeName:[UIColor setCustomColorOfTextField]}];
@@ -166,15 +177,23 @@
 }
 
 - (void)backBtnTapped {
-
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (void)draftBtnTapped {
+
+  DraftViewController*draftVwController = [self.storyboard instantiateViewControllerWithIdentifier:@"DraftVC"];
+  draftVwController.delegate = self;
+  [self.navigationController pushViewController:draftVwController animated:YES];
+}
+
 #pragma mark - Add check box of category
+/**************************************************************************************************
+ Function to add category checkbox
+ **************************************************************************************************/
 - (void)addCheckBoxWithLabel {
 
-    int yAxis = 315;
-
+    int yAxis = 250;
     for (int i=0 ; i<self.arryCategory.count ; i++) {
 
         NSDictionary *dictCategory = [self.arryCategory objectAtIndex:i];
@@ -182,13 +201,13 @@
         NSString *strCatName = [dictCategory valueForKey:@"name"];
 
         UILabel *lblCheckBox = [[UILabel alloc]init];
-        lblCheckBox.frame = CGRectMake(50, yAxis, 250, 21);
+        lblCheckBox.frame = CGRectMake(50, yAxis+1, 250, 21);
         lblCheckBox.text = strCatName;
         lblCheckBox.textColor = [UIColor whiteColor];
         lblCheckBox.font = [UIFont systemFontOfSize:14];
         [self.vScrollView addSubview:lblCheckBox];
 
-        M13Checkbox *btnCheckBox = [[M13Checkbox alloc]initWithFrame:CGRectMake(22, yAxis, 20, 21)];
+        M13Checkbox *btnCheckBox = [[M13Checkbox alloc]initWithFrame:CGRectMake(22, yAxis, 23, 23)];
         btnCheckBox.tag = catId;
         btnCheckBox.checkState = 0;
         [self.vScrollView addSubview:btnCheckBox];
@@ -204,8 +223,8 @@
 
     lblWebLink.frame = CGRectMake (lblWebLink.frame.origin.x, yAxis + 90, lblAddImageOrVideo.frame.size.width, lblWebLink.frame.size.height);
     self.txtFldWebLink.frame = CGRectMake(self.txtFldWebLink.frame.origin.x, yAxis + 90, self.txtFldWebLink.frame.size.width, self.txtFldWebLink.frame.size.height);
-
-    self.btnOK.frame = CGRectMake(20, yAxis + 150, self.btnOK.frame.size.width, self.btnOK.frame.size.height);
+    self.segPublishStatement.frame = CGRectMake(20, yAxis + 145, self.view.frame.size.width - 40, self.segPublishStatement.frame.size.height);
+    self.btnOK.frame = CGRectMake(20, yAxis + 190, self.btnOK.frame.size.width, self.btnOK.frame.size.height);
 
     self.vScrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.btnOK.frame.origin.y + 95);
     [self stopAnimation];
@@ -214,25 +233,24 @@
 #pragma mark - Add check box of auther and publish
 - (void) addChakeBoxs {
 
-    chkAuthor = [[M13Checkbox alloc]initWithFrame:CGRectMake(self.view.frame.size.width - 50 ,lblShowAsAuthor.frame.origin.y, 20, 21)];
+    chkAuthor = [[M13Checkbox alloc]initWithFrame:CGRectMake(self.view.frame.size.width - 50 ,lblShowAsAuthor.frame.origin.y - 6, 29, 29)];
     chkAuthor.checkState = 0;
     chkAuthor.checkColor = [UIColor blackColor];
     [chkAuthor addTarget:self action:@selector(authorBtnTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.vScrollView addSubview:chkAuthor];
   
-    chkPublishStat = [[M13Checkbox alloc]initWithFrame:CGRectMake(self.view.frame.size.width - 50,lblPublishStmt.frame.origin.y, 20, 21)];
-    chkPublishStat.checkState = 0;
-    chkPublishStat.enabled = NO;
-    [self.vScrollView addSubview:chkPublishStat];
+    chkShowOnProfile = [[M13Checkbox alloc]initWithFrame:CGRectMake(self.view.frame.size.width - 50,lblShowOnProfile.frame.origin.y - 8 , 29, 29)];
+    chkShowOnProfile.checkState = 0;
+    [self.vScrollView addSubview:chkShowOnProfile];
 }
 
 #pragma mark - Auther button tapped
 - (void)authorBtnTapped {
 
     if (chkAuthor.checkState == 1) {
-        self.swtPublish.enabled = NO;
+        chkShowOnProfile.enabled = NO;
     } else {
-        self.swtPublish.enabled = YES;
+        chkShowOnProfile.enabled = YES;
     }
 }
 
@@ -280,8 +298,14 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
 
-    if (textField == self.txtFldWebLink){
-        self.vScrollView.contentOffset = CGPointMake(0, 430);
+    if (textField == self.txtFldWebLink) {
+        if(self.txtFldPathOfUploadFile.hidden == YES) {
+            self.vScrollView.contentOffset = CGPointMake(0, self.vScrollView.contentSize.height);
+            self.vScrollView.contentSize = CGSizeMake(self.vScrollView.contentSize.width, self.vScrollView.contentSize.height + 160);
+        } else {
+            self.vScrollView.contentOffset = CGPointMake(0,640);
+            self.vScrollView.contentSize = CGSizeMake(self.vScrollView.contentSize.width, self.vScrollView.contentSize.height + 200);
+        }
     }
 }
 
@@ -289,6 +313,7 @@
 
     if (textField == self.txtFldWebLink){
         self.vScrollView.contentOffset = CGPointMake(0, 0);
+        self.vScrollView.contentSize = CGSizeMake(self.vScrollView.contentSize.width, self.vScrollView.contentSize.height - 160);
     }
 }
 
@@ -299,9 +324,7 @@
 
         [self.api callGETUrl:nil method:@"/api/v1/languages" success:^(AFHTTPRequestOperation *task, id responseObject) {
 
-            NSLog(@"%@",responseObject);
             NSArray *arryLanguage = [[responseObject valueForKey:@"data"]valueForKey:@"language"];
-
             for (NSDictionary *dictResponse in arryLanguage) {
                 NSString *laungID;
                 NSString *lName;
@@ -313,13 +336,11 @@
             }
 
         } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-            NSLog(@"%@",error);
         }];
     }
 }
 
 #pragma mark - Language btn is tapped
-
 - (IBAction)languageBtnTapped:(id)sender {
 
     [self.view endEditing:YES];
@@ -335,6 +356,7 @@
 #pragma mark - Segment button change
 - (IBAction)indexChangedofUploadData:(UISegmentedControl *)sender {
 
+  [self.view endEditing:YES];
     if (self.segUpload.selectedSegmentIndex == 0) {
         alertSelectFile = [[UIAlertView alloc] initWithTitle:@"Select From Device" message:nil delegate:self cancelButtonTitle:@"Select" otherButtonTitles:@"Cancel", nil];
         [alertSelectFile show];
@@ -356,11 +378,24 @@
             dispatch_async (dispatch_get_main_queue(), ^{
                 [self.api callGETUrl:nil method:@"/api/v1/categories" success:^(AFHTTPRequestOperation *task, id responseObject) {
 
-                    NSLog(@"%@",responseObject);
-                    self.arryCategory = [[responseObject valueForKey:@"data"]valueForKey:@"categories"];
+                    NSArray *arryCategory = [[responseObject valueForKey:@"data"]valueForKey:@"categories"];
+                    for (NSDictionary *dictResp in arryCategory) {
+                        NSNumber *catId = [dictResp valueForKey:@"id"];
+                        NSString *catName = [dictResp valueForKey:@"name"];
+                        NSNumber *sortOder = [dictResp valueForKey:@"sort_order"];
+                        NSDictionary *dictCat = @{@"name":catName, @"id":catId, @"sortOder":sortOder};
+                        [self.arryCategory addObject:dictCat];
+                    }
+
+                    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sortOder"
+                                                                                   ascending:YES];
+                    NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
+                    NSArray *sortedArray = [self.arryCategory sortedArrayUsingDescriptors:sortDescriptors];
+                    [self.arryCategory removeAllObjects];
+                    self.arryCategory = [sortedArray mutableCopy];
+
                     [self addCheckBoxWithLabel];
                 } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-                    NSLog(@"%@",error);
                 }];
             });
         });
@@ -447,6 +482,8 @@
 
         self.txtFldWebLink.frame = CGRectMake(self.txtFldWebLink.frame.origin.x, self.txtFldWebLink.frame.origin.y+50, self.txtFldWebLink.frame.size.width, self.txtFldWebLink.frame.size.height);
 
+        self.segPublishStatement.frame = CGRectMake(20,  self.segPublishStatement.frame.origin.y + 50, self.view.frame.size.width - 40, self.segPublishStatement.frame.size.height);
+
         self.btnOK.frame = CGRectMake(self.btnOK.frame.origin.x, self.btnOK.frame.origin.y+ 50, self.btnOK.frame.size.width, self.btnOK.frame.size.height);
     }
     self.txtFldPathOfUploadFile.text = urlOfFile.absoluteString;
@@ -488,10 +525,30 @@
     }
 
     if (strImageString.length == 0 && urlYoutube.absoluteString.length == 0) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please select file of your device or give youtube video url." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [msgAlert show];
-        [self stopAnimation];
-        return;
+        UIImage *image = [UIImage imageNamed:@"download1"];
+        NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(image)];
+        strImageString = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        typeOfUploadFile = @"image.jpg";
+    }
+
+  if (urlYoutube.absoluteString.length != 0) {//youtube
+    NSString *strVideoId = [self isValid:urlYoutube];
+        if (strVideoId == nil) {
+            UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter right youtube url." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [msgAlert show];
+            [self stopAnimation];
+            return;
+        } else{
+          NSString *strVideoUrl = [NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@",strVideoId];
+          urlYoutube = [NSURL URLWithString:strVideoUrl];
+          NSString *strVideoId = [self isValid:urlYoutube];
+          if (strVideoId == nil) {
+            UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter right youtube url." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [msgAlert show];
+            [self stopAnimation];
+            return;
+          }
+        }
     }
 
     if ([ConstantClass checkNetworkConection] == NO) {
@@ -502,14 +559,19 @@
         strImageString = @"";
     }
 
-    if (chkPublishStat.checkState == 1) {
-        is_publish = 1;
+    if (chkShowOnProfile.checkState == 1) {
+        isAuther = 1;
+    } else {
+        isAuther = 0;
     }
 
     if (chkAuthor.checkState == 1) {
         isAuther = 1;
     }
-
+    NSString *strWebUrl= @"";
+    if (self.txtFldWebLink.text.length != 0) {
+        strWebUrl = [NSString stringWithFormat:@"https://%@" ,self.txtFldWebLink.text];
+    }
     dispatch_queue_t queue = dispatch_queue_create("post Belief", NULL);
     dispatch_async(queue, ^ {
         dispatch_async (dispatch_get_main_queue(), ^{
@@ -520,7 +582,8 @@
                                     @"category_ids":arryselectedCategory,
                                     @"is_publish":[NSNumber numberWithBool:is_publish],
                                     @"show_author": [NSNumber numberWithBool:isAuther],
-                                    @"belief_image":strImageString
+                                    @"belief_image":strImageString,
+                                    @"belief_url":strWebUrl
                                     };
 
             NSDictionary *dict;
@@ -536,34 +599,106 @@
 
         [self.api callPostUrlWithHeader:dict method:@"/api/v1/beliefs" success:^(AFHTTPRequestOperation *task, id responseObject) {
 
-            NSLog(@"%@", responseObject);
             [self stopAnimation];
-
              alertVwSuccess = [[UIAlertView alloc]initWithTitle:@"Success!!!"message:@"Successfully add belief." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
             [alertVwSuccess show];
-
         } failure:^(AFHTTPRequestOperation *task, NSError *error) {
 
             [self stopAnimation];
             NSString *jsonMessage = task.responseString;
-            if (jsonMessage.length == 0) {
-
-                UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:@"Alert"message:@"Error to upload." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                [alertVw show];
-                return;
-            }
             NSData *data = [jsonMessage dataUsingEncoding:NSUTF8StringEncoding];
             id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-
             NSDictionary *dictMessage = (NSDictionary *)jsonResponse;
             NSString *msg = [[dictMessage valueForKey:@"info"]objectAtIndex:0];
-
-            UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:@"Alert"message:msg delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+            UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:@"Error"message:msg delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
             [alertVw show];
             [self stopAnimation];
             }];
         });
     });
+}
+
+- (NSString*)isValid:(NSURL *)youtubeVideoURL {
+
+    NSString *regexString = @"^(?:http(?:s)?://)?(?:www\\.)?(?:youtu\\.be/|youtube\\.com/(?:(?:watch)?\\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)/))([^\?&\"'>]+)";
+    NSError *error;
+    NSRegularExpression *regex =
+    [NSRegularExpression regularExpressionWithPattern:regexString
+                                              options:NSRegularExpressionCaseInsensitive
+                                                error:&error];
+    NSTextCheckingResult *match = [regex firstMatchInString:self.txtFldPathOfUploadFile.text
+                                                    options:0
+                                                      range:NSMakeRange(0, [self.txtFldPathOfUploadFile.text length])];
+
+    if (match && match.numberOfRanges == 2) {
+        NSRange videoIDRange = [match rangeAtIndex:1];
+        NSString *videoID = [self.txtFldPathOfUploadFile.text substringWithRange:videoIDRange];
+        return videoID;
+    }
+    return nil;
+}
+
+- (IBAction)segmentActionOfPublish:(id)sender {
+
+  UISegmentedControl *segment = (UISegmentedControl*)sender;
+  NSInteger index = segment.selectedSegmentIndex;
+
+  if (index == 0) {
+    is_publish = YES;
+  } else {
+    [self saveStatementAsDraft];
+  }
+}
+
+
+- (void)saveStatementAsDraft{
+
+  NSMutableString *strCategories = [[NSMutableString alloc]init];
+
+  if (self.txtstatement.text.length == 0) {
+    UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter statement." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [msgAlert show];
+    [self stopAnimation];
+    return;
+  }
+
+  for (int i = 0 ; i<self.arryCategorybtnList.count; i ++) {
+    M13Checkbox *checkBtn = [self.arryCategorybtnList objectAtIndex:i];
+    if (checkBtn.checkState == 1) {
+      [strCategories  appendString:[NSString stringWithFormat:@"%@,",[NSNumber numberWithInteger:checkBtn.tag]]];
+    }
+  }
+
+  NSDictionary *dictStatement = @ {@"statement":self.txtstatement.text,
+                                    @"categories":strCategories,
+                                    @"language":self.txtlanguage.text,
+                                    @"languageId":[NSString stringWithFormat:@"%i",selectedLauguageId],
+                                    @"auther":[NSNumber numberWithBool:chkAuthor.checkState],
+                                    @"draftId":[NSString stringWithFormat:@"%ld",(long)([[NSDate date] timeIntervalSince1970])],
+                                    @"userid": userObject.userid
+                                    };
+
+  [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+    [Draft entityWithDictionary:dictStatement inContext:localContext];
+  } completion:^(BOOL success, NSError *error) {
+
+  }];
+}
+
+- (void)showDraftInfo:(Draft *)draft {
+
+  self.txtstatement.text = draft.statement;
+  self.txtlanguage.text = draft.langName;
+  selectedLauguageId = draft.languageId.intValue;
+  chkAuthor.checkState = draft.auther.boolValue;
+  arrySelectCategory = [draft.categories componentsSeparatedByString:@","];
+  for (int i=0; i<self.arryCategorybtnList.count; i++) {
+
+    M13Checkbox *checkBtn = [self.arryCategorybtnList objectAtIndex:i];
+    if ([arrySelectCategory containsObject:[NSString stringWithFormat:@"%i",(int) checkBtn.tag]]) {
+      checkBtn.checkState = 1;
+    }
+   }
 }
 
 @end

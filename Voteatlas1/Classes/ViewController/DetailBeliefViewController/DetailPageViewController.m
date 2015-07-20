@@ -20,10 +20,13 @@
 @interface DetailPageViewController () <keepMePostedDelegate>{
 
     UIActivityIndicatorView *activityIndicator;
-    int support;
-    int oppose;
+    NSInteger support;
+    NSInteger oppose;
     BOOL isSupport;
     KeepMePostView *vwKeepMwPosted;
+
+    NSURL *_urlToLoad;
+    NSString *videoUrl;
 }
 
 @end
@@ -35,7 +38,11 @@
 
     [super viewDidLoad];
     self.api = [AppApi sharedClient];
-    self.mapvwBelief.zoomEnabled = NO;
+    self.mapvwBelief.zoomEnabled = YES;
+    MKCoordinateSpan span = {.latitudeDelta = 180, .longitudeDelta = 360};
+    MKCoordinateRegion region = MKCoordinateRegionMake(CLLocationCoordinate2DMake(0.0000f, 0.0000f), span);
+    [self.mapvwBelief setRegion:region animated:YES];
+
     [self.customVwOfBtns instantiateAppApi];
     self.customVwOfBtns.isDetailVw = YES;
     [self.customVwOfBtns setFrameOfButtons:10 additionSpace:10];
@@ -78,17 +85,12 @@
 }
 
 #pragma mark - Default UI settings
+/**************************************************************************************************
+ Function to set default setting
+ **************************************************************************************************/
 - (void)defaulUISettings {
-    if (IS_IPHONE_4_OR_LESS) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG4.png"]];
-    } else if (IS_IPHONE_5) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG5.png"]];
-    } else if (IS_IPHONE_6) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6.png"]];
-    } else if (IS_IPHONE_6P) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6Pluse.png"]];
-    }
 
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[ConstantClass imageAccordingToPhone]];
     UIBarButtonItem *btnBack = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(backBtnTapped)];
     btnBack.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setLeftBarButtonItem:btnBack];
@@ -123,6 +125,9 @@
 }
 
 #pragma mark - Call Belief api
+/**************************************************************************************************
+ Function to call belief api
+ **************************************************************************************************/
 - (void)callBeliefApi {
 
     if ([ConstantClass checkNetworkConection] == NO) {
@@ -136,7 +141,6 @@
         dispatch_async (dispatch_get_main_queue(), ^{
 
             [self.api callGETUrlWithHeaderAuthentication :param method:@"/api/v1/belief" success:^(AFHTTPRequestOperation *task, id responseObject) {
-                NSLog(@"%@",responseObject);
                 NSDictionary *dict = responseObject;
                 NSDictionary *response = [[dict objectForKey:@"data"]valueForKey:@"belief"];
                 support =  [[[dict objectForKey:@"data"]valueForKey:@"agree"] integerValue];
@@ -152,7 +156,6 @@
                 [self hideActivityIndicator];
                 
             } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-                NSLog(@"%@",task.responseString);
                 [self hideActivityIndicator];
             }];
         });
@@ -162,9 +165,16 @@
 #pragma mark - Play button tapped
 - (IBAction)playBtnTapped:(id)sender {
 
-    ShowImageOrVideoViewController *vcShowImgOrVideo = [self.storyboard instantiateViewControllerWithIdentifier:@"PlayVideo"];
-    vcShowImgOrVideo.belief = self.objBelief;
-    [self.navigationController pushViewController:vcShowImgOrVideo animated:YES];
+    if (self.objBelief.hasImage == YES) {
+        ShowImageOrVideoViewController *vcShowImgOrVideo = [self.storyboard instantiateViewControllerWithIdentifier:@"PlayVideo"];
+        vcShowImgOrVideo.belief = self.objBelief;
+        UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:vcShowImgOrVideo];
+        [self presentViewController:navController animated:YES completion:nil];
+    } else if (self.objBelief.hasYouTubeUrl == YES) {
+        [self submitYouTubeURL];
+    } else if (self.objBelief.hasVideo == YES){
+        [self systemVideoPlay:nil];
+    }
 }
 
 #pragma mark - Convert data in to model class
@@ -194,7 +204,6 @@
     if (![[dictBelief valueForKey:@"get_desposition"] isKindOfClass:[NSNull class]]) {
         self.objBelief.dictDisposition = [dictBelief valueForKey:@"get_desposition"];
     }
-    NSLog(@"%@", self.objBelief);
 }
 
 #pragma mark - Get location of suppose
@@ -203,9 +212,11 @@
     for (NSDictionary *dictMap in arryBeliefSupport) {
         MapLocations*objMapLocation = [[MapLocations alloc]init];
         objMapLocation.title = @"support";
-        objMapLocation.latitute = [[[dictMap objectForKey:@"location"]valueForKey:@"latitude"] floatValue];
-        objMapLocation.longitute = [[[dictMap objectForKey:@"location"]valueForKey:@"longitude"]floatValue];
-        [self.arrySupportLocation addObject:objMapLocation];
+        if ([[dictMap objectForKey:@"location"]count] != 0) {
+            objMapLocation.latitute = [[[dictMap objectForKey:@"location"]valueForKey:@"latitude"] floatValue];
+            objMapLocation.longitute = [[[dictMap objectForKey:@"location"]valueForKey:@"longitude"]floatValue];
+            [self.arrySupportLocation addObject:objMapLocation];
+        }
     }
     [self addAnotation];
 }
@@ -216,9 +227,11 @@
     for (NSDictionary *dictMap in arryOppose) {
         MapLocations*objMapLocation = [[MapLocations alloc]init];
         objMapLocation.title = @"oppose";
-        objMapLocation.latitute = [[[dictMap objectForKey:@"location"]valueForKey:@"latitude"] floatValue];
-        objMapLocation.longitute = [[[dictMap objectForKey:@"location"]valueForKey:@"longitude"]floatValue];
-        [self.arryOpposeLocation addObject:objMapLocation];
+        if ([[dictMap objectForKey:@"location"]count] != 0) {
+            objMapLocation.latitute = [[[dictMap objectForKey:@"location"]valueForKey:@"latitude"] floatValue];
+            objMapLocation.longitute = [[[dictMap objectForKey:@"location"]valueForKey:@"longitude"]floatValue];
+            [self.arryOpposeLocation addObject:objMapLocation];
+        }
     }
 }
 
@@ -235,8 +248,8 @@
 
         PinAnnotation* pinAnnotation = [[PinAnnotation alloc] init];
         pinAnnotation.title = location.title;
-        pinAnnotation.suppose = [NSString stringWithFormat:@"%d", support];
-        pinAnnotation.oppose = [NSString stringWithFormat:@"%d", oppose];
+        pinAnnotation.suppose = [NSString stringWithFormat:@"%ld", (long)support];
+        pinAnnotation.oppose = [NSString stringWithFormat:@"%ld", (long)oppose];
         pinAnnotation.coordinate = coordinate2d;
 
         [arryAnnotation addObject:pinAnnotation];
@@ -250,8 +263,8 @@
 
         PinAnnotation* pinAnnotation = [[PinAnnotation alloc] init];
         pinAnnotation.title = location.title;
-        pinAnnotation.suppose = [NSString stringWithFormat:@"%d", support];
-        pinAnnotation.oppose = [NSString stringWithFormat:@"%d", oppose];
+        pinAnnotation.suppose = [NSString stringWithFormat:@"%ld", (long)support];
+        pinAnnotation.oppose = [NSString stringWithFormat:@"%ld", (long)oppose];
         pinAnnotation.coordinate = coordinate2d;
 
         [arryAnnotation addObject:pinAnnotation];
@@ -298,7 +311,6 @@
             // Move the display position of MapView.
         [UIView animateWithDuration:0.5f
                          animations:^(void) {
-                             self.mapvwBelief.centerCoordinate = calloutAnnotation.coordinate;
                          }];
     }
     annotationView.annotation = annotation;
@@ -331,16 +343,22 @@
 
 - (void) showContent {
     [self.customVwOfBtns assignValuetoButton:self.objBelief.dictDisposition];
-    NSString *mediaUrl;
+        // NSString *mediaUrl;
     if (self.objBelief.imageUrl.length != 0) {
-        mediaUrl = self.objBelief.imageUrl;
-        [imgVwOfMedia sd_setImageWithURL:[NSURL URLWithString:self.objBelief.imageUrl] placeholderImage:nil];
+            // mediaUrl = self.objBelief.imageUrl;
+
+        dispatch_queue_t queue = dispatch_queue_create("belief", NULL);
+        dispatch_async(queue, ^ {
+            dispatch_async (dispatch_get_main_queue(), ^{
+                [imgVwOfMedia sd_setImageWithURL:[NSURL URLWithString:self.objBelief.imageUrl] placeholderImage:nil];
+            });
+        });
         return;
     } else if (self.objBelief.videoUrl.length != 0) {
-        mediaUrl = self.objBelief.videoUrl;
+            // mediaUrl = self.objBelief.videoUrl;
         [btnPlayOrShowImage setImage:[UIImage imageNamed:@"play-btn"] forState:UIControlStateNormal];
     } else if (self.objBelief.youtubeUrl.length != 0) {
-        mediaUrl = self.objBelief.youtubeUrl;
+            //  mediaUrl = self.objBelief.youtubeUrl;
         [btnPlayOrShowImage setImage:[UIImage imageNamed:@"play-btn"] forState:UIControlStateNormal];
     }
 
@@ -348,10 +366,15 @@
         [imgVwOfMedia sd_setImageWithURL:[NSURL URLWithString:self.objBelief.thumbImage_Url] placeholderImage:nil];
     }
 
-    if (([self.objBelief.thumbImage_Url isKindOfClass:[NSNull class]] && ![self.objBelief.imageUrl isEqual:[NSNull class]]) || (self.objBelief.thumbImage_Url.length == 0 && self.objBelief.imageUrl.length == 0)) {
+    if (self.objBelief.imageUrl.length == 0 && [self.objBelief.thumbImage_Url isKindOfClass:[NSNull class]] && self.objBelief.hasYouTubeUrl == NO && self.objBelief.hasVideo == NO ) {
         imgVwOfMedia.image = [UIImage imageNamed:@"download1"];
         btnPlayOrShowImage.hidden = YES;
         return;
+    }
+    if (([self.objBelief.thumbImage_Url isKindOfClass:[NSNull class]] && ![self.objBelief.imageUrl isEqual:[NSNull class]])) {
+        imgVwOfMedia.image = [UIImage imageNamed:@"video_thumb"];
+            // btnPlayOrShowImage.hidden = YES;
+            //  return;
     }
 
     [self.view bringSubviewToFront:btnPlayOrShowImage];
@@ -360,22 +383,50 @@
 }
 
 #pragma mark - Delegate of custom button view
-- (void)shareBtnTapped {
-    NSString *url;
-    if (self.objBelief.imageUrl.length != 0){
-        url = self.objBelief.imageUrl;
-    } else if (self.objBelief.videoUrl.length != 0) {
-        url = self.objBelief.videoUrl;
-    } else if (self.objBelief.youtubeUrl.length != 0) {
-        url = self.objBelief.youtubeUrl;
-    }
+- (void)sharebtnTapped:(Belief*)belief {
 
-    NSString *strShare = [NSString stringWithFormat:@"%@ \n  %@", self.objBelief.statement, url];
-    NSArray *objectsToShare = @[strShare];
+  [self showActivityIndicator];
+  dispatch_queue_t queue = dispatch_queue_create("get image", NULL);
+  dispatch_async(queue, ^ {
+    dispatch_async(dispatch_get_main_queue(), ^{
 
-    UIActivityViewController *controller = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
-    controller.excludedActivityTypes = @[UIActivityTypeMessage];
-    [self presentViewController:controller animated:YES completion:nil];
+      NSString *url;
+        UIImage *image = [[UIImage alloc]init];
+
+      if (belief.imageUrl.length != 0){
+        url = belief.imageUrl;
+        NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+        image = [UIImage imageWithData:data];
+      }
+      NSString *strShare = [NSString stringWithFormat:@"Voteatlas \n %@ \n \n https://likeminded.co\n", belief.statement];
+      NSArray *objectsToShare;
+
+      if ([belief.thumbImage_Url isKindOfClass:[NSNull class]]){
+        objectsToShare = @[strShare];
+      } else {
+        if (belief.videoUrl.length != 0) {
+          url = belief.thumbImage_Url;
+          NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+          UIImage *imageThumb = [UIImage imageWithData:data];
+          image = [ConstantClass mergeTwoImage:imageThumb andImage2:[UIImage imageNamed:@"play-btn"]];
+        } else if (belief.youtubeUrl.length != 0) {
+          url = belief.thumbImage_Url;
+          NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+          UIImage *imageThumb = [UIImage imageWithData:data];
+          image = [ConstantClass mergeTwoImage:imageThumb andImage2:[UIImage imageNamed:@"play-btn"]];
+        }
+
+        NSString *shareUrlSchema = [NSString stringWithFormat:@"voteatlas://belief_id/%li/token/%@", (long)belief.beliefId, [[NSUserDefaults standardUserDefaults]valueForKey:@"auth_token"]];
+        strShare = [NSString stringWithFormat:@"Likeminded \n %@ \n %@ \n https://likeminded.co \n", belief.statement , url];
+
+        objectsToShare = @[strShare, image, [NSURL URLWithString:shareUrlSchema]];
+      }
+      UIActivityViewController *controller = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
+      controller.excludedActivityTypes = @[UIActivityTypePrint, UIActivityTypeCopyToPasteboard, UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll, UIActivityTypeMessage, UIActivityTypeAirDrop];
+      [self presentViewController:controller animated:YES completion:nil];
+      [self hideActivityIndicator];
+    });
+  });
 }
 
 - (void)mapBtnTapped {
@@ -433,64 +484,42 @@
     NSDictionary *param = @{@"belief_id":[NSNumber numberWithInteger:self.objBelief.beliefId],
                             @"duration":[NSNumber numberWithInteger:duration]
                             };
-    [self.api callPostUrlWithHeader:param method:@"/api/v1/keep_me_notified" success:^(AFHTTPRequestOperation *task, id responseObject) {
-        [self.customVwOfBtns.btnNotes setImage:[UIImage imageNamed:@"12.png"] forState:UIControlStateNormal];
-    } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-        NSLog(@"%@", task.responseString);
-    }];
+    dispatch_queue_t queue = dispatch_queue_create("KeepMePosted", NULL);
+    dispatch_async(queue, ^ {
+        [self.api callPostUrlWithHeader:param method:@"/api/v1/keep_me_notified" success:^(AFHTTPRequestOperation *task, id responseObject) {
+            dispatch_async (dispatch_get_main_queue(), ^{
+            [self.customVwOfBtns.btnNotes setImage:[UIImage imageNamed:@"12.png"] forState:UIControlStateNormal];
+            });
+        } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+        }];
+    });
 }
 
-#pragma mark - Support button tapped
-- (IBAction)supportBtnTapped:(id)sender {
+- (IBAction)supportCommentBtnTapped:(id)sender  {
 
-    SupportCommentViewController *vcSupposeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"SupposeOpposeVC"];
-    vcSupposeVC.strSupposeOrOppose = @"Supporter";
-    if (![self.objBelief.dictDisposition isKindOfClass:[NSNull class]]) {
-        NSDictionary * dict = self.objBelief.dictDisposition;
+  SupportCommentViewController *vcSupposeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"SupposeOpposeVC"];
 
-        if (dict.count == 0){
-            vcSupposeVC.isTrash = 1;
-            vcSupposeVC.belief_Id = self.objBelief.beliefId;
-            [self.navigationController pushViewController:vcSupposeVC animated:YES];
-            return;
-        }
-        if ([[dict valueForKey:@"is_trashed"] isKindOfClass:[NSNull class]]) {
-            vcSupposeVC.isTrash = 0;
-        } else {
-            vcSupposeVC.isTrash = [[dict valueForKey:@"is_trashed"]boolValue];
-        }
-        vcSupposeVC.isSupport = [[dict valueForKey:@"is_supported"]boolValue];
+  if (![self.objBelief.dictDisposition isKindOfClass:[NSNull class]]) { //(![belief.dictDisposition isKindOfClass:[NSNull class]]) {
+    NSDictionary * dict = self.objBelief.dictDisposition;
+
+    if (dict.count == 0){
+
+      vcSupposeVC.isTrash = 1;
+      vcSupposeVC.belief_Id = self.objBelief.beliefId;
+    } else {
+
+      if ([[dict valueForKey:@"is_trashed"] isKindOfClass:[NSNull class]]) {
+        vcSupposeVC.isTrash = 0;
+      } else {
+        vcSupposeVC.isTrash = [[dict valueForKey:@"is_trashed"]boolValue];
+      }
+      vcSupposeVC.isSupport = [[dict valueForKey:@"is_supported"]boolValue];
     }
     vcSupposeVC.belief_Id = self.objBelief.beliefId;
     vcSupposeVC.strTitle = self.objBelief.statement;
-    [self.navigationController pushViewController:vcSupposeVC animated:YES];
-}
+  }
 
-#pragma mark - Oppose button tapped
-- (IBAction)opposeBtnTapped:(id)sender {
-
-    SupportCommentViewController *vcSupposeVC = [self.storyboard instantiateViewControllerWithIdentifier:@"SupposeOpposeVC"];
-    vcSupposeVC.strSupposeOrOppose = @"Opposer";
-    if (![self.objBelief.dictDisposition isKindOfClass:[NSNull class]]) {
-        NSDictionary * dict = self.objBelief.dictDisposition;
-
-        if (dict.count == 0){
-            vcSupposeVC.isTrash = 1;
-            vcSupposeVC.belief_Id = self.objBelief.beliefId;
-            [self.navigationController pushViewController:vcSupposeVC animated:YES];
-            return;
-        }
-
-        if ([[dict valueForKey:@"is_trashed"] isKindOfClass:[NSNull class]] || dict.count == 0 ) {
-            vcSupposeVC.isTrash = 0;
-        } else {
-            vcSupposeVC.isTrash = [[dict valueForKey:@"is_trashed"] boolValue];
-        }
-        vcSupposeVC.isSupport = [[dict valueForKey:@"is_supported"] boolValue];
-    }
-    vcSupposeVC.belief_Id = self.objBelief.beliefId;
-    vcSupposeVC.strTitle = self.objBelief.statement;
-    [self.navigationController pushViewController:vcSupposeVC animated:YES];
+  [self.navigationController pushViewController:vcSupposeVC animated:YES];
 }
 
 #pragma mark - Add activity indicator
@@ -513,6 +542,88 @@
 
     [activityIndicator setHidden:NO];
     [activityIndicator startAnimating];
+}
+
+#pragma mark - Play button tapped
+- (void)systemVideoPlay:(id)sender {
+
+    self.mpvc = [[MPMoviePlayerViewController alloc] init];
+        // [self.view addSubview:self.mpvc.view];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(doneButtonClick:)
+                                                 name:MPMoviePlayerWillExitFullscreenNotification
+                                               object:nil];
+
+    self.mpvc.moviePlayer.contentURL = [NSURL URLWithString:self.objBelief.videoUrl];
+    [self.mpvc.view setFrame:self.view.frame];
+    [self.mpvc.moviePlayer setUseApplicationAudioSession:NO];
+    self.mpvc.view.hidden = NO;
+    [self presentViewController:self.mpvc animated:YES completion:^{
+        self.mpvc.moviePlayer.allowsAirPlay = YES;
+        [[self.mpvc moviePlayer] setControlStyle:2];
+        self.mpvc.moviePlayer.movieSourceType = MPMovieSourceTypeStreaming;
+        self.mpvc.moviePlayer.shouldAutoplay = YES;
+    }];
+}
+
+#pragma mark - Play Youtube url
+- (void)submitYouTubeURL {
+
+    _urlToLoad = nil;
+    NSURL *url = [NSURL URLWithString:self.objBelief.youtubeUrl];
+    [HCYoutubeParser thumbnailForYoutubeURL:url thumbnailSize:YouTubeThumbnailDefaultHighQuality completeBlock:^(UIImage *image, NSError *error) {
+
+        if (!error) {
+            [HCYoutubeParser h264videosWithYoutubeURL:url completeBlock:^(NSDictionary *videoDictionary, NSError *error) {
+                NSDictionary *qualities = videoDictionary;
+                NSString *URLString = nil;
+                if ([qualities objectForKey:@"small"] != nil) {
+                    URLString = [qualities objectForKey:@"small"];
+                }
+                else if ([qualities objectForKey:@"live"] != nil) {
+                    URLString = [qualities objectForKey:@"live"];
+                }
+                else {
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Couldn't find youtube video." delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil] show];
+                    return;
+                }
+                _urlToLoad = [NSURL URLWithString:URLString];
+                    // [self.view addSubview:self.mpvc.view];
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(doneButtonClick:)
+                                                             name:MPMoviePlayerWillExitFullscreenNotification
+                                                           object:nil];
+                self.mpvc = [[MPMoviePlayerViewController alloc] init];
+                self.mpvc.moviePlayer.contentURL = _urlToLoad;
+                [self.mpvc.view setFrame:self.view.frame];
+                self.mpvc.view.hidden = NO;
+                [self.mpvc.moviePlayer setUseApplicationAudioSession:NO];
+                [self presentViewController:self.mpvc animated:YES completion:^{
+                    self.mpvc.moviePlayer.allowsAirPlay = YES;
+                    [[self.mpvc moviePlayer] setControlStyle:2];
+                    self.mpvc.moviePlayer.movieSourceType = MPMovieSourceTypeStreaming;
+                    self.mpvc.moviePlayer.shouldAutoplay = YES;
+                }];
+            }];
+        }
+        else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+            [alert show];
+        }
+    }];
+}
+- (void)doneButtonClick:(NSNotification*)aNotification{
+
+    NSNumber *reason = [aNotification.userInfo objectForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey];
+    if ([reason intValue] == MPMovieFinishReasonUserExited) {
+        [self.mpvc.moviePlayer stop];
+        [self dismissMoviePlayerViewControllerAnimated];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
+}
+
+- (void)fileItBtnTapped {
+
 }
 
 @end

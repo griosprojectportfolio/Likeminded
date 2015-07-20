@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AdminViewController : UIViewController
+@interface AdminViewController : UIViewController 
+
+@property (nonatomic, strong) IBOutlet UITableView *tbleVwCategory;
+@property(nonatomic,retain)IBOutlet CustomTextField *txtFldCat;
+@property(nonatomic,retain)IBOutlet UIButton* btnAdd;
+@property(nonatomic,retain)IBOutlet UIButton*btnSaveSortOrder;
+@property(nonatomic,retain)IBOutlet UIScrollView *scrollVwCat;
+
 
 @end

@@ -1,33 +1,37 @@
-//
-//  SupportCommentViewController.m
-//  Voteatlas1
-//
-//  Created by GrepRuby on 31/03/15.
-//  Copyright (c) 2015 Voteatlas. All rights reserved.
-//
+  //
+  //  SupportCommentViewController.m
+  //  Voteatlas1
+  //
+  //  Created by GrepRuby on 31/03/15.
+  //  Copyright (c) 2015 Voteatlas. All rights reserved.
+  //
 
 #import "SupportCommentViewController.h"
 #import "SupportOpposeCell.h"
+#import "ProfileViewController.h"
 #import "Comment.h"
 #import "User.h"
 
 #define WIDTH 120
 
-@interface SupportCommentViewController () <UITableViewDataSource, UITableViewDelegate> {
-    UIView *view;
-    NSString *userName;
-    UIView *vwOverlay;
-    UIActivityIndicatorView *activityIndicator;
+@interface SupportCommentViewController () <UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, CommentDelegate> {
+  UIView *view;
+  NSString *userName;
+  UIView *vwOverlay;
+  UIActivityIndicatorView *activityIndicator;
 }
 
 @property (readonly, nonatomic) UIView *container;
-
+@property (nonatomic) CGRect tbleHeight;
 @property (nonatomic, strong) NSMutableArray *arryCommentSuppose;
-@property (nonatomic, strong) NSMutableArray *arryCommentOppose;
-@property (nonatomic, strong) NSMutableArray *arrayComment;
+@property (nonatomic, strong)  NSMutableArray *arryCommentOppose;
+@property (nonatomic, strong)  NSMutableArray *arryComment;
 @property (readonly, nonatomic) PHFComposeBarView *composeBarView;
 @property (readonly, nonatomic) UITextView *textView;
 @property (nonatomic,readonly) UITableView *tbleVwComment;
+@property (nonatomic,readonly) UIView *vwComment;
+@property (nonatomic,readonly) UIButton *btnOppose;
+@property (nonatomic,readonly) UIButton *btnSuppose;
 @property (nonatomic) int toolBarYOrigin;
 
 @end
@@ -40,29 +44,27 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 - (void)viewDidLoad {
 
     [super viewDidLoad];
+
     self.api = [AppApi sharedClient];
     self.navigationController.navigationBar.hidden = NO;
     self.navigationController.navigationBar.translucent = YES;
+    self.title = @"Comments";
+    self.strSupposeOrOppose = @"Supporter";
 
-    if ([self.strSupposeOrOppose isEqualToString:@"Supporter"]){
-        self.title = @"Support Comment";
-    } else {
-        self.title = @"Opppose Comment";
-    }
     self.tbleVwComment.tableFooterView = [[UIView alloc]initWithFrame:CGRectZero];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillToggle:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
+                                           selector:@selector(keyboardWillToggle:)
+                                               name:UIKeyboardWillShowNotification
+                                             object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillToggle:)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
+                                           selector:@selector(keyboardWillToggle:)
+                                               name:UIKeyboardWillHideNotification
+                                             object:nil];
 
-    self.arryCommentOppose = [[NSMutableArray alloc]init];
     self.arryCommentSuppose = [[NSMutableArray alloc]init];
-    self.arrayComment = [[NSMutableArray alloc]init];
+    self.arryComment = [[NSMutableArray alloc]init];
+    self.arryCommentOppose = [[NSMutableArray alloc]init];
 
     NSArray *arrFetchedData =[User MR_findAll];
     User *user  = [arrFetchedData objectAtIndex:0];
@@ -70,23 +72,33 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 
     [self addActivityIndicator];
     [self startAnimation];
+    [_btnSuppose setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
 
     [self commentApiCall];
     [self defaulUISettings];
+
+    UIBarButtonItem *btnCancel= [[UIBarButtonItem alloc]initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelBtnTapped)];
+    btnCancel.tintColor = [UIColor setCustomColorOfTextField];
+    self.navigationItem.rightBarButtonItem = btnCancel;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-        // Dispose of any resources that can be recreated.
 }
 
 - (void)dealloc {
+
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillShowNotification
-                                                  object:nil];
+                                                  name:UIKeyboardWillShowNotification
+                                                object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillHideNotification
-                                                  object:nil];
+                                                  name:UIKeyboardWillHideNotification
+                                                object:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    self.tabBarController.title = @"Comment";
 }
 
 - (NSUInteger)supportedInterfaceOrientations {
@@ -99,16 +111,8 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 
 #pragma mark -  Set default UI
 - (void)defaulUISettings {
-    if (IS_IPHONE_4_OR_LESS) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG4.png"]];
-    } else if (IS_IPHONE_5) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG5.png"]];
-    } else if (IS_IPHONE_6) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6.png"]];
-    } else if (IS_IPHONE_6P) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6Pluse.png"]];
-    }
 
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[ConstantClass imageAccordingToPhone]];
     UIBarButtonItem *btnBack = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(backBtnTapped)];
     btnBack.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setLeftBarButtonItem:btnBack];
@@ -117,71 +121,47 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 #pragma mark - Comment api call
 - (void)commentApiCall {
 
-    if ([ConstantClass checkNetworkConection] == NO) {
-        return;
-    }
-    NSDictionary *param = @{@"topic_key":[NSNumber numberWithInteger:self.belief_Id]};
-    [self.api callGETUrl:param method:@"/api/v1/comment" success:^(AFHTTPRequestOperation *task, id responseObject) {
-        NSLog(@"%@",responseObject);
+  if ([ConstantClass checkNetworkConection] == NO) {
+    return;
+  }
 
-        NSDictionary *dictResponse = [responseObject objectForKey:@"comment"];
+  NSDictionary *param = @{@"topic_key":[NSNumber numberWithInteger:self.belief_Id]};
+  [self.api callGETUrl:param method:@"/api/v1/comment" success:^(AFHTTPRequestOperation *task, id responseObject) {
 
-        if ([self.strSupposeOrOppose isEqualToString:@"Opposer"]) {
-            if ([[dictResponse valueForKey:@"opposer_comments"] count] != 0) {
+    NSDictionary *dictResponse = [responseObject objectForKey:@"comment"];
+    if ([[dictResponse valueForKey:@"opposer_comments"] count] != 0) {
 
-                NSArray *arryOppose = [dictResponse valueForKey:@"opposer_comments"];
-                for (NSDictionary *dict in arryOppose) {
-                    Comment *objComment = [[Comment alloc]init];
-                    objComment.name = userName;
-                    objComment.comment = [dict valueForKey:@"content"];
-                    [self.arryCommentOppose addObject:objComment];
-                    _tbleVwComment.frame = CGRectMake(0, 0, 375, 600);
-                }
-            }
-
-            if (self.isSupport == 0 && self.isTrash == 0) {
-                self.arrayComment = self.arryCommentOppose;
-                [self.tbleVwComment reloadData];
-
-                CGRect frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-44);
-                _tbleVwComment.frame = frame;
-                [[self composeBarView] setHidden:NO];
-            }
-        } else {
-            if ([[dictResponse valueForKey:@"supporter_comments"] count] != 0) {
-
-                NSArray *arrySuppose = [dictResponse valueForKey:@"supporter_comments"];
-                for (NSDictionary *dict in arrySuppose) {
-                    Comment *objComment = [[Comment alloc]init];
-                    objComment.name = userName;
-                    objComment.comment = [dict valueForKey:@"content"];
-                    [self.arryCommentSuppose addObject:objComment];
-                    [_container addSubview:[self composeBarView]];
-
-                    CGRect frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-44);
-                    _tbleVwComment.frame = frame;
-                }
-            }
-
-            if (self.isSupport == 1 && self.isTrash == 0) {
-                self.arrayComment = self.arryCommentSuppose;
-                [[self composeBarView] setHidden:NO];
-                CGRect frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-44);
-                _tbleVwComment.frame = frame;
-                [_tbleVwComment reloadData];
-            }
+        NSArray *arryOppose = [dictResponse valueForKey:@"opposer_comments"];
+        for (NSDictionary *dict in arryOppose) {
+            Comment *objComment = [[Comment alloc]init];
+            objComment.name = userName;
+            objComment.comment = [dict valueForKey:@"content"];
+            objComment.userName = [dict valueForKey:@"author_name"];
+            [self.arryCommentOppose addObject:objComment];
+            _tbleVwComment.frame = CGRectMake(0, 104, self.view.frame.size.width, self.view.frame.size.height-148);
         }
+      }
 
-        if (self.arrayComment.count == 0) {
-            self.tbleVwComment.hidden = YES;
-            UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:@"Message" message:@"No Comments." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-            [alertVw show];
+      if ([[dictResponse valueForKey:@"supporter_comments"] count] != 0) {
+
+        NSArray *arrySuppose = [dictResponse valueForKey:@"supporter_comments"];
+        for (NSDictionary *dict in arrySuppose) {
+            Comment *objComment = [[Comment alloc]init];
+            objComment.name = [dict valueForKey:@"author_name"];
+            objComment.comment = [dict valueForKey:@"content"];
+            objComment.userName = [dict valueForKey:@"author_name"];
+
+            [self.arryCommentSuppose addObject:objComment];
+            [_container addSubview:[self composeBarView]];
+            CGRect frame = CGRectMake(0, 104, self.view.frame.size.width, self.view.frame.size.height-148);
+            _tbleVwComment.frame = frame;
         }
-
-        [self stopAnimation];
-    } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-        NSLog(@"%@",task.responseString);
-    }];
+      }
+      [self commentBtnTapped:_btnSuppose];
+      [self stopAnimation];
+  } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+    [self stopAnimation];
+  }];
 }
 
 #pragma mark - UITable view Datasource
@@ -190,7 +170,7 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.arrayComment.count;
+    return self.arryComment.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -198,26 +178,28 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
     NSString *cellIdentifier = @"comment";
     SupportOpposeCell *cell;
     cell = (SupportOpposeCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+
     NSArray *arryObjects;
 
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
     if (cell == nil) {
         arryObjects = [[NSBundle mainBundle]loadNibNamed:@"SupportOpposeCell" owner:nil options:nil];
         cell = [arryObjects objectAtIndex:0];
+        cell.delegate = self;
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
-    Comment *objComment = [self.arrayComment objectAtIndex:indexPath.row];
-    [cell setValueOfCommentsInTableVw:objComment];
+    Comment *objComment = [self.arryComment objectAtIndex:indexPath.row];
+    [cell setValueOfCommentsInTableVw:objComment withWidth:_tbleVwComment.frame.size.width - 60];
     return cell;
 }
 
 #pragma mark - UITable view Delegates
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    Comment *objComment = [self.arrayComment objectAtIndex:indexPath.row];
-    NSString *strSuppose = objComment.comment;
-    CGRect rect =[strSuppose boundingRectWithSize:CGSizeMake(WIDTH, 200) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin)attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:15.0]} context:nil];
+    Comment *objComment = [self.arryComment objectAtIndex:indexPath.row];
+    NSString *strSuppose = [objComment.comment stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    CGRect rect =[strSuppose boundingRectWithSize:CGSizeMake(_tbleVwComment.frame.size.width - 60, 200) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin)attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:15.0]} context:nil];
     return (rect.size.height + 28);
 }
 
@@ -229,6 +211,8 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 
     UIView *container = [self container];
     [container addSubview:[self textView]];
+    [container addSubview:[self addComentTab:container.frame]];
+
     [container addSubview:[self addTableVw:container.frame]];
     [container addSubview:[self composeBarView]];
     [[self composeBarView] setHidden:YES];
@@ -239,17 +223,88 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 @synthesize tbleVwComment = _tbleVwComment;
 - (UITableView *) addTableVw:(CGRect)frame {
 
-    CGRect rect = kInitialViewFrame;
-
-    if(IS_IPHONE_6) {
-        rect = CGRectMake(0, 0, 375, 560);
-    }
     _tbleVwComment = [[UITableView alloc]init];
     _tbleVwComment.delegate = self;
     _tbleVwComment.dataSource = self;
     _tbleVwComment.backgroundColor = [UIColor clearColor];
     _tbleVwComment.separatorColor = [UIColor darkGrayColor];
     return _tbleVwComment;
+}
+
+@synthesize vwComment = _vwComment;
+@synthesize btnSuppose = _btnSuppose;
+@synthesize btnOppose = _btnOppose;
+- (UIView *) addComentTab:(CGRect)frame {
+
+    _vwComment = [[UIView alloc]initWithFrame:CGRectMake(0, 64, [ConstantClass withOfDeviceScreen], 40)];
+    _vwComment.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _vwComment.backgroundColor = [UIColor clearColor];
+
+    _btnSuppose = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_btnSuppose setTitle:@"Support" forState:UIControlStateNormal];
+    _btnSuppose.tag = 100;
+    _btnSuppose.backgroundColor = [UIColor clearColor];
+    _btnSuppose.frame = CGRectMake(0, 0, _vwComment.frame.size.width/2, 40);
+    [_btnSuppose setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [_btnSuppose setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
+    [_btnSuppose addTarget:self action:@selector(commentBtnTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_vwComment addSubview:_btnSuppose];
+
+    _btnOppose = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_btnOppose setTitle:@"Oppose" forState:UIControlStateNormal];
+    _btnOppose.tag = 200;
+    _btnOppose.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+    _btnOppose.frame = CGRectMake( _vwComment.frame.size.width/2, 0,  _vwComment.frame.size.width/2, 40);
+    [_btnOppose setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [_btnOppose setTitleColor:[UIColor blueColor] forState:UIControlStateSelected];
+    [_btnOppose addTarget:self action:@selector(commentBtnTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_vwComment addSubview:_btnOppose];
+
+  return _vwComment;
+}
+
+- (void)commentBtnTapped:(id)sender{
+
+    UIButton *btnSeder = (UIButton *)sender;
+    [_btnSuppose setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    _btnSuppose.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+
+    [_btnOppose setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    _btnOppose.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+
+    _tbleVwComment.hidden = NO;
+
+    if (btnSeder.tag == 100) {
+        self.arryComment = self.arryCommentSuppose;
+        self.strSupposeOrOppose = @"Supporter";
+
+        if (self.isSupport == 1 && self.isTrash == 0) {
+          [[self composeBarView] setHidden:NO];
+          CGRect frame = CGRectMake(0, 104, self.view.frame.size.width, self.view.frame.size.height-148);
+          _tbleVwComment.frame = frame;
+        } else {
+          [[self composeBarView] setHidden:YES];
+          CGRect frame = CGRectMake(0, 104, self.view.frame.size.width, self.view.frame.size.height-104);
+          _tbleVwComment.frame = frame;
+        }
+    } else {
+      self.arryComment = self.arryCommentOppose;
+      self.strSupposeOrOppose = @"Opposer";
+
+        if (self.isSupport == 0 && self.isTrash == 0) {
+          CGRect frame = CGRectMake(0, 104, self.view.frame.size.width, self.view.frame.size.height-148);
+          _tbleVwComment.frame = frame;
+          [[self composeBarView] setHidden:NO];
+        } else {
+          CGRect frame = CGRectMake(0, 104, self.view.frame.size.width, self.view.frame.size.height-104);
+          _tbleVwComment.frame = frame;
+           [[self composeBarView] setHidden:YES];
+        }
+  }
+
+    [btnSeder setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    btnSeder.backgroundColor = [UIColor clearColor];
+    [_tbleVwComment reloadData];
 }
 
 #pragma mark - UIKeyboard Notification
@@ -276,46 +331,55 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 
     CGRect newContainerFrame = [[self container] frame];
     newContainerFrame.size.height += sizeChange;
-
     if (sizeChange < 0) {
-        [self setFrameOfTableVwAccordingToKeyboard:CGRectMake(self.tbleVwComment.frame.origin.x,self.tbleVwComment.frame.origin.y, self.tbleVwComment.frame.size.width, self.tbleVwComment.frame.size.height - 256)];
-      }
+        self.tbleHeight = _tbleVwComment.frame;
+    }
     [UIView animateWithDuration:duration
-                          delay:0
-                        options:(animationCurve << 16)|UIViewAnimationOptionBeginFromCurrentState
-                     animations:^{
-                         [[self container] setFrame:newContainerFrame];
+                        delay:0
+                      options:(animationCurve << 16)|UIViewAnimationOptionBeginFromCurrentState
+                   animations:^{
+                     [[self container] setFrame:newContainerFrame];
+                     if (sizeChange < 0) {
+                       [self setFrameOfTableVwAccordingToKeyboard:CGRectMake(self.tbleVwComment.frame.origin.x, 104, self.tbleVwComment.frame.size.width, self.tbleVwComment.frame.size.height - 256)];//256
                      }
-                     completion:NULL];
+                   }
+                   completion:NULL];
 }
 
 - (void)setFrameOfTableVwAccordingToKeyboard:(CGRect)frame {
+    _tbleVwComment.frame = frame;
 
-      [UIView animateWithDuration:0.3 animations:^{
-          _tbleVwComment.frame = frame;
-
-          if (self.arrayComment.count > 0) {
-              NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.arrayComment.count -1  inSection:0];
-              [_tbleVwComment scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-          }
-      }];
+    if (self.arryComment.count > 0) {
+      NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.arryComment.count -1  inSection:0];
+      [_tbleVwComment scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    }
 }
 
-    // Delegate to get text to comment
+- (void)cancelBtnTapped {
+
+    [[self composeBarView] resignFirstResponder];
+    [self setFrameOfTableVwAccordingToKeyboard:self.tbleHeight];
+}
+  // Delegate to get text to comment
 - (void)composeBarViewDidPressButton:(PHFComposeBarView *)composeBarView {
 
     NSString *content = [NSString stringWithFormat:@"%@", [composeBarView text]];
-    NSLog(@"%@", content);
     [composeBarView setText:@"" animated:YES];
     [composeBarView resignFirstResponder];
-    _tbleVwComment.frame = CGRectMake(self.tbleVwComment.frame.origin.x,self.tbleVwComment.frame.origin.y, self.tbleVwComment.frame.size.width, self.tbleVwComment.frame.size.height + 256);
+    [self setFrameOfTableVwAccordingToKeyboard:self.tbleHeight];
 
     Comment *objComment = [[Comment alloc]init];
     objComment.name = userName;
+    objComment.userName = userName;
     objComment.comment = content;
-    [self.arrayComment addObject:objComment];
-    [_tbleVwComment reloadData];
+    [self.arryComment addObject:objComment];
 
+    if (self.arryComment.count == 1) {
+        _tbleVwComment.frame = self.tbleHeight;
+        _tbleVwComment.hidden = NO;
+        [[self composeBarView] setHidden:NO];
+    }
+    [_tbleVwComment reloadData];
     [self sendCommnetApiCall:content];
 }
 
@@ -327,67 +391,49 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
     }
 
     NSDictionary *param = @{@"topic_key":[NSNumber numberWithInteger:self.belief_Id],
-                                          @"type":self.strSupposeOrOppose,
-                                          @"content":commentContent,
-                                          @"topic_title":self.strTitle};
+                          @"type":self.strSupposeOrOppose,
+                          @"content":commentContent,
+                          @"topic_title":self.strTitle};
     [self.api callPostUrlWithHeader:param method:@"/api/v1/comment_create" success:^(AFHTTPRequestOperation *task, id responseObject) {
-        NSLog(@"%@",responseObject);
     } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-        NSLog(@"%@", task.responseString);
     }];
 }
 
-///*
-//- (void)composeBarViewDidPressUtilityButton:(PHFComposeBarView *)composeBarView {
-//    [self prependTextToTextView:@"Utility button pressed"];
-//}
-//
-//- (void)prependTextToTextView:(NSString *)text {
-//    NSString *newText = [text stringByAppendingFormat:@"\n\n%@", [[self textView] text]];
-//    [[self textView] setText:newText];
-//}
-//*/
-//
-
 - (void)backBtnTapped {
-    [self.navigationController popViewControllerAnimated:YES];
+  [self.navigationController popViewControllerAnimated:YES];
 }
 
 @synthesize container = _container;
 - (UIView *)container {
+
     if (!_container) {
         _container = [[UIView alloc] initWithFrame:kInitialViewFrame];
         [_container setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
-    }
+  }
 
-    return _container;
+  return _container;
 }
-//
-////Making text view
-//
+  //
+  ////Making text view
+  //
 @synthesize composeBarView = _composeBarView;
 - (PHFComposeBarView *)composeBarView {
+
     if (!_composeBarView) {
         CGRect frame = CGRectMake(0.0f,
                                   kInitialViewFrame.size.height - PHFComposeBarViewInitialHeight,
                                   kInitialViewFrame.size.width,
                                   PHFComposeBarViewInitialHeight);
-//        CGRect frame = kInitialViewFrame;
-//        if(IS_IPHONE_6) {
-//            frame = CGRectMake(0, 604 - PHFComposeBarViewInitialHeight, 375, PHFComposeBarViewInitialHeight);
-//        } else if (IS_IPHONE_4_OR_LESS) {
-//            frame = CGRectMake(0, 480 - 64 - PHFComposeBarViewInitialHeight, 320, PHFComposeBarViewInitialHeight);
-//        }
 
         _composeBarView = [[PHFComposeBarView alloc] initWithFrame:frame];
         [_composeBarView setMaxCharCount:160];
         [_composeBarView setMaxLinesCount:5];
-        [_composeBarView setPlaceholder:@"Type something..."];
-        //[_composeBarView setUtilityButtonImage:[UIImage imageNamed:@"Camera"]];
+        [_composeBarView setPlaceholder:@"Compose new comment.."];
+          //[_composeBarView setUtilityButtonImage:[UIImage imageNamed:@"Camera"]];
         [_composeBarView setDelegate:self];
-    }
+  }
 
-    return _composeBarView;
+  return _composeBarView;
 }
 
 - (void)composeBarView:(PHFComposeBarView *)composeBarView
@@ -396,46 +442,61 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
               duration:(NSTimeInterval)duration
         animationCurve:(UIViewAnimationCurve)animationCurve {
 
-    NSLog(@"%@ %@", NSStringFromCGRect(startFrame), NSStringFromCGRect(endFrame));
-
-    if (endFrame.size.height > self.toolBarYOrigin) {
-        self.toolBarYOrigin = endFrame.size.height;
-        [self setFrameOfTableVwAccordingToKeyboard:CGRectMake(self.tbleVwComment.frame.origin.x, self.tbleVwComment.frame.origin.y, self.tbleVwComment.frame.size.width, self.tbleVwComment.frame.size.height - 21)];
-    } else {
-        self.toolBarYOrigin = endFrame.size.height;
-        [self setFrameOfTableVwAccordingToKeyboard:CGRectMake(self.tbleVwComment.frame.origin.x, self.tbleVwComment.frame.origin.y, self.tbleVwComment.frame.size.width, self.tbleVwComment.frame.size.height + 21)];
-    }
+  if (endFrame.size.height > self.toolBarYOrigin) {
+    self.toolBarYOrigin = endFrame.size.height;
+    [self setFrameOfTableVwAccordingToKeyboard:CGRectMake(self.tbleVwComment.frame.origin.x, self.tbleVwComment.frame.origin.y, self.tbleVwComment.frame.size.width, self.tbleVwComment.frame.size.height - 20)];
+  } else {
+    self.toolBarYOrigin = endFrame.size.height;
+    [self setFrameOfTableVwAccordingToKeyboard:CGRectMake(self.tbleVwComment.frame.origin.x, self.tbleVwComment.frame.origin.y, self.tbleVwComment.frame.size.width, self.tbleVwComment.frame.size.height + 20)];
+  }
 }
 
 #pragma mark -  Add activity indicator
 - (void)addActivityIndicator {
 
-    vwOverlay = [[UIView alloc]initWithFrame:self.view.frame];
-    vwOverlay.backgroundColor = [UIColor clearColor];
-    [vwOverlay setHidden:YES];
-    [self.view addSubview:vwOverlay];
-
-    activityIndicator = [[UIActivityIndicatorView alloc]init];
-    activityIndicator.center = CGPointMake(self.view.frame.size.width/2, (self.view.frame.size.height-35)/2);
-    activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
-    activityIndicator.tintColor = [UIColor setCustomColorOfTextField];
-    [self.view bringSubviewToFront:activityIndicator];
-    [self.view addSubview:activityIndicator];
-    [activityIndicator setHidden:YES];
+  vwOverlay = [[UIView alloc]initWithFrame:self.view.frame];
+  vwOverlay.backgroundColor = [UIColor clearColor];
+  [vwOverlay setHidden:YES];
+  [self.view addSubview:vwOverlay];
+  int yAxis = self.view.frame.size.height;
+  int xAxis = self.view.frame.size.width;
+  if (IS_IPHONE_5) {
+    yAxis = 568;
+  } else if (IS_IPHONE_6) {
+    yAxis = 667;
+    xAxis = 375;
+  } else if (IS_IPHONE_6P) {
+    yAxis = 768;
+    xAxis = 414;
+  }
+  activityIndicator = [[UIActivityIndicatorView alloc]init];
+  activityIndicator.center = CGPointMake(xAxis/2, (yAxis-35)/2);
+  activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+  activityIndicator.tintColor = [UIColor setCustomColorOfTextField];
+  [self.view bringSubviewToFront:activityIndicator];
+  [self.view addSubview:activityIndicator];
+  [activityIndicator setHidden:YES];
 }
 
 - (void)startAnimation {
 
-    [vwOverlay setHidden:NO];
-    [activityIndicator setHidden:NO];
-    [activityIndicator startAnimating];
+  [vwOverlay setHidden:NO];
+  [activityIndicator setHidden:NO];
+  [activityIndicator startAnimating];
 }
 
 - (void)stopAnimation {
 
-    [vwOverlay setHidden:YES];
-    [activityIndicator setHidden:YES];
-    [activityIndicator stopAnimating];
+  [vwOverlay setHidden:YES];
+  [activityIndicator setHidden:YES];
+  [activityIndicator stopAnimating];
+}
+
+
+- (void)profileBtnTapped:(Comment*)comment {
+    ProfileViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfilID"];
+    vc.userName = comment.userName;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

@@ -10,4 +10,11 @@
 
 @interface MapLocations : NSObject
 
+@property (nonatomic) float latitute;
+@property (nonatomic) float longitute;
+
+@property (nonatomic, strong) NSString*title;
+@property (nonatomic, strong) NSNumber *suppose;
+@property (nonatomic, strong) NSNumber *oppose;
+
 @end

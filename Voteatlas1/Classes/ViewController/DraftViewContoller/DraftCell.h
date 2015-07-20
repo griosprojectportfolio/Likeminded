@@ -10,4 +10,6 @@
 
 @interface DraftCell : UITableViewCell
 
+@property (nonatomic, strong)IBOutlet UILabel *lblStatement;
+
 @end

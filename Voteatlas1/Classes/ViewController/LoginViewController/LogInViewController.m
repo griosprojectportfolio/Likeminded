@@ -15,11 +15,13 @@
 #import "User.h"
 #import "ConstantClass.h"
 
-#define CLIEND_ID @"1036316931513-15iksgifetf94do55ia9cnostko4bg6n.apps.googleusercontent.com" //add your Google Plus ClientID here
+NSString *client_id = GOOGLE_PLUS_CLIEND_ID;
+NSString *secret = GOOGLE_PLUS_SECRET_ID;
+NSString *callbakc = GOOGLE_PLUS_CALL_BACK_URL;
+NSString *scope = GOOGLE_PLUS_SCOPE;
+NSString *visibleactions = GOOGLE_PLUS_VIVIBLE_ACTION;
 
-static NSString * const kClientId = CLIEND_ID;
-
-@interface LogInViewController ()<GPPSignInDelegate> {
+@interface LogInViewController () {
     UIActivityIndicatorView *activityIndicator;
     UIView *vwOverlay;
 }
@@ -41,17 +43,21 @@ static NSString * const kClientId = CLIEND_ID;
     [self defaulUISettings];
     [self addActivityIndicator];
 
-    [[GPPSignIn sharedInstance] signOut]; //signout
-    [self loginWithGoolgePlus:nil];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"auth_token"] != nil) {
+
+        TableViewController *vwController = (TableViewController*)[self.storyboard instantiateViewControllerWithIdentifier: @"TableViewID"];
+        vwController.schemaBeliefId = self.schemaBeliefId;
+        [self.navigationController pushViewController:vwController animated:NO];
+        [self loginWithGoolgePlus:nil];
+        return;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = YES;
-    [self deleteAllEntityObjects];
     NSDictionary *userDetail = [[NSUserDefaults standardUserDefaults] objectForKey:@"Remember"];
-
     if (userDetail.count != 0) {
         self.txtUserID.text = [userDetail valueForKey:@"email"];
         self.txtPassword.text = [userDetail valueForKey:@"password"];
@@ -60,28 +66,26 @@ static NSString * const kClientId = CLIEND_ID;
         self.txtPassword.text = @"";
         self.txtUserID.text = @"";
     }
+    [self removeWebView];
 }
 
 - (void)viewDidAppear:(BOOL)animated{
 
     [super viewDidAppear:animated];
+    [MagicalRecord setupCoreDataStackWithStoreNamed:@"Voteatlas"];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Default UI
+#pragma mark - Set Default UI
+/**************************************************************************************************
+ Function to set default ui
+ **************************************************************************************************/
 - (void)defaulUISettings {
-    if (IS_IPHONE_4_OR_LESS) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG4.png"]];
-    } else if (IS_IPHONE_5) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG5.png"]];
-    } else if (IS_IPHONE_6) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6.png"]];
-    } else if (IS_IPHONE_6P) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6Pluse.png"]];
-    }
+
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[ConstantClass imageAccordingToPhone]];
     int txtFieldWidth = self.view.frame.size.width - 40;
 
     [self.txtPassword setCustomImgVw:@"password" withWidth:txtFieldWidth];
@@ -98,8 +102,12 @@ static NSString * const kClientId = CLIEND_ID;
 
         self.lblRememberMe.frame = CGRectMake(self.lblRememberMe.frame.origin.x, self.btnSignUp.frame.origin.y + 63 , self.lblRememberMe.frame.size.width, self.lblRememberMe.frame.size.height);
 
-        self.btnCheckRemeber = [[M13Checkbox alloc]initWithFrame:CGRectMake(self.lblRememberMe.frame.origin.x - 23, self.lblRememberMe.frame.origin.y + 3 , 20, 20)];
+        self.btnCheckRemeber = [[M13Checkbox alloc]initWithFrame:CGRectMake(self.lblRememberMe.frame.origin.x - 27, self.lblRememberMe.frame.origin.y + 2 , 22, 22)];
         [self.view addSubview:self.btnCheckRemeber];
+
+        if (!IS_IPHONE_5) {
+            self.imgViewTextLogo.frame = CGRectMake((self.view.frame.size.width - (self.imgViewTextLogo.frame.size.width+20))/2,self.imgViewTextLogo.frame.origin.y-20, self.imgViewTextLogo.frame.size.width+20, self.imgViewTextLogo.frame.size.height+20);
+        }
     } else {
         [self setFrameForiPhone4];
     }
@@ -125,55 +133,30 @@ static NSString * const kClientId = CLIEND_ID;
     } else if (IS_IPHONE_6P) {
         fbXAxs = fbXAxs - 25;
     }
-    btnFb.frame = CGRectMake(fbXAxs, self.lblRememberMe.frame.origin.y + yAxis, btnFb.frame.size.width ,  btnFb.frame.size.height);
-    btnTwitter.frame = CGRectMake(btnFb.frame.origin.x+ btnFb.frame.size.width + 25, self.lblRememberMe.frame.origin.y + yAxis, btnTwitter.frame.size.width ,  btnTwitter.frame.size.height);
+    btnFb.frame = CGRectMake(fbXAxs, self.lblRememberMe.frame.origin.y + yAxis, btnFb.frame.size.width, btnFb.frame.size.height);
+    btnTwitter.frame = CGRectMake(btnFb.frame.origin.x+ btnFb.frame.size.width + 25, self.lblRememberMe.frame.origin.y + yAxis, btnTwitter.frame.size.width , btnTwitter.frame.size.height);
     btnGooglePlus.frame = CGRectMake(btnTwitter.frame.origin.x+ btnTwitter.frame.size.width + 25, self.lblRememberMe.frame.origin.y + yAxis, btnGooglePlus.frame.size.width, btnGooglePlus.frame.size.height);
-
-    //google plus button layout
-    self.signInButton = [[GPPSignInButton alloc]initWithFrame:CGRectMake(btnTwitter.frame.origin.x+ btnTwitter.frame.size.width + 25, self.lblRememberMe.frame.origin.y + yAxis, 50, 50)];
-        //self.signInButton.backgroundColor = [UIColor blackColor];
-    [self.view addSubview:self.signInButton];
-    [self.view bringSubviewToFront:self.signInButton];
 }
 
-#pragma mark - Delete all entity
-- (void)deleteAllEntityObjects {
-    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+- (void)setFrameForiPhone4 {
 
-        NSArray *arrEntities = [[NSArray alloc] initWithObjects:@"User",nil];
-        for (int i=0; i < arrEntities.count; i++) {
-            NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-
-            NSEntityDescription *entity = [NSEntityDescription entityForName:[arrEntities objectAtIndex:i] inManagedObjectContext:localContext];
-            [fetchRequest setEntity:entity];
-            NSError *error;
-            NSArray *items = [localContext executeFetchRequest:fetchRequest error:&error];
-
-            for (NSManagedObject *managedObject in items) {
-                [localContext deleteObject:managedObject];
-            }
-            if (![localContext save:&error]) {
-
-            }
-        }
-    }];
-}
-
-- (void) setFrameForiPhone4 {
-    self.imgViewEarth.frame = CGRectMake(self.imgViewEarth.frame.origin.x,self.imgViewEarth.frame.origin.y-40, self.imgViewEarth.frame.size.width, self.imgViewEarth.frame.size.height);
-    self.imgViewTextLogo.frame = CGRectMake(self.imgViewTextLogo.frame.origin.x,self.imgViewTextLogo.frame.origin.y-40, self.imgViewTextLogo.frame.size.width, self.imgViewTextLogo.frame.size.height);
+    self.imgViewTextLogo.frame = CGRectMake((self.view.frame.size.width - self.imgViewTextLogo.frame.size.width)/2,self.imgViewTextLogo.frame.origin.y-40, self.imgViewTextLogo.frame.size.width, self.imgViewTextLogo.frame.size.height);
     self.txtPassword.frame = CGRectMake(self.txtPassword.frame.origin.x,self.txtPassword.frame.origin.y-40, self.txtPassword.frame.size.width, self.txtPassword.frame.size.height);
     self.txtUserID.frame = CGRectMake(self.txtUserID.frame.origin.x,self.txtUserID.frame.origin.y-40, self.txtUserID.frame.size.width, self.txtUserID.frame.size.height);
     self.btnSignUp.frame = CGRectMake(self.txtPassword.frame.origin.x,self.txtPassword.frame.origin.y+55,self.txtPassword.frame.size.width/2 - 10, 40);
     self.btnLogIn.frame = CGRectMake(self.btnSignUp.frame.size.width+self.btnSignUp.frame.origin.x+17, self.btnSignUp.frame.origin.y, self.btnSignUp.frame.size.width, 40);
     self.lblRememberMe.frame = CGRectMake(self.lblRememberMe.frame.origin.x, self.btnSignUp.frame.origin.y + 50 , self.lblRememberMe.frame.size.width, self.lblRememberMe.frame.size.height);
-    self.btnCheckRemeber = [[M13Checkbox alloc]initWithFrame:CGRectMake(self.lblRememberMe.frame.origin.x - 22, self.lblRememberMe.frame.origin.y + 7 , 20, 20)];
+    self.btnCheckRemeber = [[M13Checkbox alloc]initWithFrame:CGRectMake(self.lblRememberMe.frame.origin.x - 22, self.lblRememberMe.frame.origin.y + 1 , 20, 20)];
     [self.view addSubview:self.btnCheckRemeber];
 }
 
 #pragma mark - Login button tapped
+/**************************************************************************************************
+ Function to login btn tapped
+ **************************************************************************************************/
 - (IBAction)loginButtonTapped:(id)sender {
 
+    [self.view endEditing:YES];
     if ([ConstantClass checkNetworkConection] == YES) {
         [self fetchDataFromDataBase];
     }
@@ -192,7 +175,10 @@ static NSString * const kClientId = CLIEND_ID;
         [msgAlert show];
         return;
     }
-    [self startAnimation];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self startAnimation];
+    });
+
     NSMutableDictionary *dicstUser = [[NSMutableDictionary alloc]init];
     [dicstUser setObject:self.txtUserID.text forKey:@"email"];
     [dicstUser setObject:self.txtPassword.text forKey:@"password"];
@@ -216,22 +202,23 @@ static NSString * const kClientId = CLIEND_ID;
         NSMutableArray *arr = [NSMutableArray arrayWithObject:dis];
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             [User entityFromArray:arr inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            self.auth_token = [dis objectForKey:@"auth_token"];
+            [[NSUserDefaults standardUserDefaults]setValue:self.auth_token forKey:@"auth_token"];
+            [[NSUserDefaults standardUserDefaults]setValue:[[dis objectForKey:@"language"] objectForKey:@"name"] forKey:@"userlanguage"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+
+            NSLog(@"%@",self.auth_token);
+            [self stopAnimation];
+            TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
+            vc.userID = self.auth_token;
+            [self.navigationController pushViewController:vc animated:YES];
+            flag = TRUE;
         }];
-        self.auth_token = [dis objectForKey:@"auth_token"];
-        [[NSUserDefaults standardUserDefaults]setValue:self.auth_token forKey:@"auth_token"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-
-        NSLog(@"%@",self.auth_token);
-        [self stopAnimation];
-        TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
-        vc.userID = self.auth_token;
-        [self.navigationController pushViewController:vc animated:YES];
-        flag = TRUE;
-
     } failure:^(AFHTTPRequestOperation *task, NSError *error) {
         [self stopAnimation];
         NSLog(@"%@",task.responseString);
-        NSString *jsonMessage = task.responseString; //@"@{sss:asdasd, asd:asdasd}";//
+        NSString *jsonMessage = task.responseString;
         NSData *data = [jsonMessage dataUsingEncoding:NSUTF8StringEncoding];
         if (data != nil) {
             id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
@@ -244,6 +231,7 @@ static NSString * const kClientId = CLIEND_ID;
 }
 
 - (NSManagedObjectContext *)managedObjectContext {
+
     NSManagedObjectContext *context = nil;
     id delegate = [[UIApplication sharedApplication] delegate];
     if ([delegate performSelector:@selector(managedObjectContext)]) {
@@ -253,6 +241,9 @@ static NSString * const kClientId = CLIEND_ID;
 }
 
 #pragma mark - Sign Up button tapped
+/**************************************************************************************************
+ Function to sign up btn tapped
+ **************************************************************************************************/
 - (IBAction)signupButtonTapped:(id)sender {
 
     SignUpViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"signupID"];
@@ -260,6 +251,9 @@ static NSString * const kClientId = CLIEND_ID;
 }
 
 #pragma mark - Forgot password button tapped
+/**************************************************************************************************
+ Function to forgot password btn tapped
+ **************************************************************************************************/
 - (IBAction)forgotPassButtonTapped:(id)sender {
 
     ForgotPasswordViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ForgotPasswordID"];
@@ -268,6 +262,7 @@ static NSString * const kClientId = CLIEND_ID;
 
 #pragma mark - UIText Field Delegates
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
+
     if (IS_IPHONE_4_OR_LESS) {
         CGRect frame = self.view.frame;
         frame.origin.y = frame.origin.y - 50;
@@ -276,6 +271,7 @@ static NSString * const kClientId = CLIEND_ID;
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
+
     if (IS_IPHONE_4_OR_LESS) {
         CGRect frame = self.view.frame;
         frame.origin.y = frame.origin.y + 50;
@@ -284,6 +280,7 @@ static NSString * const kClientId = CLIEND_ID;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
+
     [textField resignFirstResponder];
     return YES;
 }
@@ -292,7 +289,6 @@ static NSString * const kClientId = CLIEND_ID;
 /**************************************************************************************************
  Function to facebook btn tapped
  **************************************************************************************************/
-
 - (IBAction)facebookBtnTapped:(id)sender {
 
     UIButton *btn = (UIButton*)sender;
@@ -315,7 +311,6 @@ static NSString * const kClientId = CLIEND_ID;
                 sharedAppDelegate.hasFacebook = YES;
             }
         }
-
         [self getProfileOfFB];
     }
 }
@@ -327,7 +322,7 @@ static NSString * const kClientId = CLIEND_ID;
 
 - (void)loginFacebook {
 
-    [FBSession openActiveSessionWithReadPermissions:@[ @"basic_info",  @"read_stream"]  allowLoginUI:YES
+    [FBSession openActiveSessionWithReadPermissions:@[ @"basic_info", @"read_stream"]  allowLoginUI:YES
                                   completionHandler:^(FBSession *session,
                                                       FBSessionState state,
                                                       NSError *error) {
@@ -350,10 +345,12 @@ static NSString * const kClientId = CLIEND_ID;
 /**************************************************************************************************
  Function to get user facebook profile info
  **************************************************************************************************/
-
 - (void)getProfileOfFB {
 
-    [self startAnimation];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self startAnimation];
+    });
+
     if (!sharedAppDelegate.hasFacebook) {
         [self loginFacebook];
         return;
@@ -388,16 +385,22 @@ static NSString * const kClientId = CLIEND_ID;
         NSMutableArray *arr = [NSMutableArray arrayWithObject:dis];
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             [User entityFromArray:arr inContext:localContext];
+        } completion:^(BOOL success, NSError *error) {
+            [self stopAnimation];
+            self.auth_token = [dis objectForKey:@"auth_token"];
+            [[NSUserDefaults standardUserDefaults]setValue:self.auth_token forKey:@"auth_token"];
+            NSString *languageName = @"English";
+            NSString *strLagguage = [dis objectForKey:@"language"];
+            if (![strLagguage isKindOfClass:[NSNull class]]) {
+              languageName = [[dis objectForKey:@"language"] objectForKey:@"name"];
+            }
+            [[NSUserDefaults standardUserDefaults]setValue:languageName forKey:@"userlanguage"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+
+            TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
+            vc.userID = self.auth_token;
+            [self.navigationController pushViewController:vc animated:YES];
         }];
-        [self stopAnimation];
-        self.auth_token = [dis objectForKey:@"auth_token"];
-        [[NSUserDefaults standardUserDefaults]setValue:self.auth_token forKey:@"auth_token"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-
-        TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
-        vc.userID = self.auth_token;
-        [self.navigationController pushViewController:vc animated:YES];
-
     } failure:^(AFHTTPRequestOperation *task, NSError *error) {
         [self stopAnimation];
 
@@ -413,8 +416,10 @@ static NSString * const kClientId = CLIEND_ID;
 /**************************************************************************************************
  Function to twitter btn tapped
  **************************************************************************************************/
-
 - (IBAction)twitterBtnTapped:(id)sender {
+
+    UIButton *btn = (UIButton*)sender;
+    self.btnTag = btn.tag;
 
     if ([ConstantClass checkNetworkConection] == NO) {
         return;
@@ -427,7 +432,10 @@ static NSString * const kClientId = CLIEND_ID;
         return;
     } else {
 
-        [self startAnimation];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self startAnimation];
+        });
+
         ACAccountStore *account = [[ACAccountStore alloc] init];
         ACAccountType *accountType = [account
                                       accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
@@ -477,121 +485,214 @@ static NSString * const kClientId = CLIEND_ID;
                     }];
                  }
            } else {
-
                NSLog(@"error %@",error);
-                   // [Constant showAlert:ERROR_CONNECTING forMessage:ERROR_AUTHEN];
            }
          }];
     }
 }
 
 - (void)callTwitterLoginApi:(NSDictionary *)dictUser {
-    NSDictionary *param = @{@"token":[dictUser valueForKey:@"id"]};
 
+    NSDictionary *param = @{@"token":[dictUser valueForKey:@"id"]};
     [self.api callGETUrlWithHeaderAuthentication:param method:@"/api/v1/social_login" success:^(AFHTTPRequestOperation *task, id responseObject) {
         NSLog(@"%@",responseObject);
-
+        [self stopAnimation];
         NSDictionary *dicst = [[NSDictionary alloc]initWithDictionary:responseObject];
         NSDictionary *dis = [dicst objectForKey:@"data"];
         NSMutableArray *arr = [NSMutableArray arrayWithObject:dis];
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
             [User entityFromArray:arr inContext:localContext];
-        }];
-        self.auth_token = [dis objectForKey:@"auth_token"];
-        [[NSUserDefaults standardUserDefaults]setValue:self.auth_token forKey:@"auth_token"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-
-        TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
-        vc.userID = self.auth_token;
-        [self.navigationController pushViewController:vc animated:YES];
-
-    } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-        NSLog(@"%@",task.responseString);
-        SignUpViewController *vcSignUp = [self.storyboard instantiateViewControllerWithIdentifier:@"signupID"];
-        vcSignUp.dictUserDetail = dictUser;
-        vcSignUp.btnTag = self.btnTag;
-        [self.navigationController pushViewController:vcSignUp animated:YES];
-    }];
-}
-
-#pragma mark - Login with google plus
-- (void)loginWithGoolgePlus:(id)sender {
-
-    GPPSignIn *signIn = [GPPSignIn sharedInstance];
-    signIn.shouldFetchGooglePlusUser = YES;
-    signIn.shouldFetchGoogleUserEmail = YES;  // Uncomment to get the user's email
-
-        // You previously set kClientId in the "Initialize the Google+ client" step
-    signIn.clientID = kClientId;
-
-    [GPPSignIn sharedInstance].actions = [NSArray arrayWithObjects:
-                                          @"http://schemas.google.com/AddActivity",
-                                          @"http://schemas.google.com/BuyActivity",
-                                          @"http://schemas.google.com/CheckInActivity",
-                                          @"http://schemas.google.com/CommentActivity",
-                                          @"http://schemas.google.com/CreateActivity",
-                                          @"http://schemas.google.com/ListenActivity",
-                                          @"http://schemas.google.com/ReserveActivity",
-                                          @"http://schemas.google.com/ReviewActivity",
-                                          nil];
-
-        // Uncomment one of these two statements for the scope you chose in the previous step
-    signIn.scopes = @[ kGTLAuthScopePlusLogin];  // "https://www.googleapis.com/auth/plus.login" scope
-                                                  //signIn.scopes = @[ @"profile" ];            // "profile" scope
-    signIn.delegate = self;
-
-    [signIn trySilentAuthentication];
-}
-
-- (void)finishedWithAuth: (GTMOAuth2Authentication *)auth
-                   error: (NSError *) error {
-
-    NSLog(@"Received error %@ and auth object %@",error, auth);
-    if (error) {
-            // Do some error handling here.
-    } else {
-        NSLog(@"%@ %@",[GPPSignIn sharedInstance].userEmail, [GPPSignIn sharedInstance].userID);
-            [self refreshInterfaceBasedOnSignIn];
-
-        NSDictionary *param = @{@"google":@"1",
-                                @"email":[GPPSignIn sharedInstance].userEmail };
-
-        [self.api callGETUrlWithHeaderAuthentication:param method:@"/api/v1/social_login" success:^(AFHTTPRequestOperation *task, id responseObject) {
-            NSLog(@"%@",responseObject);
-            NSDictionary *dicst = [[NSDictionary alloc]initWithDictionary:responseObject];
-            NSDictionary *dis = [dicst objectForKey:@"data"];
-            NSMutableArray *arr = [NSMutableArray arrayWithObject:dis];
-            [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-                [User entityFromArray:arr inContext:localContext];
-            }];
+        } completion:^(BOOL success, NSError *error) {
             self.auth_token = [dis objectForKey:@"auth_token"];
             [[NSUserDefaults standardUserDefaults]setValue:self.auth_token forKey:@"auth_token"];
+            [[NSUserDefaults standardUserDefaults]setValue:[[dis objectForKey:@"language"] objectForKey:@"name"] forKey:@"userlanguage"];
+            NSLog(@"%@", [[NSUserDefaults standardUserDefaults]valueForKey:@"userlanguage"]);
             [[NSUserDefaults standardUserDefaults] synchronize];
 
             TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
             vc.userID = self.auth_token;
             [self.navigationController pushViewController:vc animated:YES];
-        } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-            NSLog(@"%@",task.responseString);
-            SignUpViewController *vcSignUp = [self.storyboard instantiateViewControllerWithIdentifier:@"signupID"];
-            vcSignUp.btnTag = self.btnTag;
-            vcSignUp.isGoogle = YES;
-            vcSignUp.strGPlusMailId = [GPPSignIn sharedInstance].userEmail;
-            [self.navigationController pushViewController:vcSignUp animated:YES];
         }];
+    } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+        NSLog(@"%@",task.responseString);
+        SignUpViewController *vcSignUp = [self.storyboard instantiateViewControllerWithIdentifier:@"signupID"];
+        vcSignUp.dictUserDetail = dictUser;
+        vcSignUp.btnTag = self.btnTag;
+        [self stopAnimation];
+        [self.navigationController pushViewController:vcSignUp animated:YES];
+    }];
+}
+
+- (void)addWebViewOfGooglePlus {
+
+    vwOverlayWebView = [[UIView alloc]initWithFrame:self.view.frame];
+    vwOverlayWebView.backgroundColor = [UIColor colorWithWhite:0.7 alpha:1.0];
+    [self.view addSubview:vwOverlayWebView];
+
+    webview = [[UIWebView alloc]initWithFrame:CGRectMake(10, 20, vwOverlay.frame.size.width-20, vwOverlay.frame.size.height-40)];
+    webview.delegate = self;
+    [vwOverlayWebView addSubview:webview];
+
+    UIButton *btnHideMap = [UIButton buttonWithType:UIButtonTypeCustom];
+    btnHideMap.frame = CGRectMake(self.view.frame.size.width - 44, 9, 44, 44);
+    [btnHideMap setTitle:@"X" forState:UIControlStateNormal];
+    [btnHideMap setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [btnHideMap addTarget:self action:@selector(removeWebView) forControlEvents:UIControlEventTouchUpInside];
+    btnHideMap.titleLabel.textColor = [UIColor darkGrayColor];
+    [vwOverlayWebView addSubview:btnHideMap];
+}
+
+- (void)removeWebView {
+
+    if(vwOverlayWebView != nil) {
+        [vwOverlayWebView removeFromSuperview];
     }
 }
 
-- (void)refreshInterfaceBasedOnSignIn {
-    if ([[GPPSignIn sharedInstance] authentication]) {
+#pragma mark - Login with google plus
+/**************************************************************************************************
+ Function to google plus btn tapped
+ **************************************************************************************************/
+- (IBAction)loginWithGoolgePlus:(id)sender {
 
+    [self addWebViewOfGooglePlus];
+    NSHTTPCookieStorage* cookies = [NSHTTPCookieStorage sharedHTTPCookieStorage]; // Delete cookies
+    NSArray *allCookies = [cookies cookies];
+    for(NSHTTPCookie *cookie in allCookies) {
+        if([[cookie domain] rangeOfString:@"google.com"].location != NSNotFound) {
+            [cookies deleteCookie:cookie];
+        }
+    }
+
+    [self startAnimation];
+    NSString *url = [NSString stringWithFormat:@"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=%@&redirect_uri=%@&scope=%@&data-requestvisibleactions=%@",client_id,callbakc,scope,visibleactions];
+    [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [self stopAnimation];
+}
+
+- (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType {
+
+  if ([[[request URL] host] isEqualToString:@"localhost"]) {
+
+      // Extract oauth_verifier from URL query
+    NSString* verifier = nil;
+    NSArray* urlParams = [[[request URL] query] componentsSeparatedByString:@"&"];
+    for (NSString* param in urlParams) {
+      NSArray* keyValue = [param componentsSeparatedByString:@"="];
+      NSString* key = [keyValue objectAtIndex:0];
+      if ([key isEqualToString:@"code"]) {
+        verifier = [keyValue objectAtIndex:1];
+        NSLog(@"verifier %@",verifier);
+        break;
+      } else if ([key isEqualToString:@"error"]) {
+          [self removeWebView];
+          return YES;
+      }
+    }
+
+    if (verifier) {
+      NSString *data = [NSString stringWithFormat:@"code=%@&client_id=%@&client_secret=%@&redirect_uri=%@&grant_type=authorization_code", verifier,client_id,secret,callbakc];
+      NSString *url = [NSString stringWithFormat:@"https://accounts.google.com/o/oauth2/token"];
+      NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+      [request setHTTPMethod:@"POST"];
+      [request setHTTPBody:[data dataUsingEncoding:NSUTF8StringEncoding]];
+      NSURLConnection *aConnection=[[NSURLConnection alloc] initWithRequest:request delegate:self];
+      NSLog(@"%@",aConnection);
+      receivedData = [[NSMutableData alloc] init];
     } else {
-
+        // ERROR!
     }
+    return YES;
+  }
+  return YES;
 }
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+
+    [receivedData appendData:data];
+    NSLog(@"verifier %@",receivedData);
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                  message:[NSString stringWithFormat:@"%@", error]
+                                                 delegate:nil
+                                        cancelButtonTitle:@"OK"
+                                        otherButtonTitles:nil];
+    [alert show];
+    [self removeWebView];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+
+    [self removeWebView];
+    NSDictionary *tokenData = [NSJSONSerialization JSONObjectWithData:receivedData options:NSJSONReadingMutableContainers error:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self startAnimation];
+        [self momentButton:[tokenData objectForKey:@"access_token"]];
+    });
+}
+
+- (void)momentButton:(NSString*)accessTocken {
+
+    NSString *str =  [NSString stringWithFormat:@"https://www.googleapis.com/oauth2/v1/userinfo?access_token=%@",accessTocken];
+    NSString *escapedUrl = [str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@",escapedUrl]];
+    NSString *jsonData = [[NSString alloc] initWithContentsOfURL:url usedEncoding:nil error:nil];
+    NSData *data = [jsonData dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dictUserInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    if(dictUserInfo.count != 0) {
+        [self finishedWithAuth:dictUserInfo];
+    }
+    NSLog(@"%@",dictUserInfo);
+}
+
+- (void)finishedWithAuth:(NSDictionary *)dictUserInfo {
+
+    NSDictionary *param = @{@"google":@"1",
+                            @"email":[dictUserInfo objectForKey:@"email"]};
+
+    [self.api callGETUrlWithHeaderAuthentication:param method:@"/api/v1/social_login" success:^(AFHTTPRequestOperation *task, id  responseObject) {
+          NSLog(@"%@",responseObject);
+          NSDictionary *dicst = [[NSDictionary alloc]initWithDictionary:responseObject];
+          NSDictionary *dis = [dicst objectForKey:@"data"];
+          NSMutableArray *arr = [NSMutableArray arrayWithObject:dis];
+          [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+              [User entityFromArray:arr inContext:localContext];
+          } completion:^(BOOL success, NSError *error) {
+          self.auth_token = [dis objectForKey:@"auth_token"];
+              [[NSUserDefaults standardUserDefaults]setValue:self.auth_token forKey:@"auth_token"];
+              [[NSUserDefaults standardUserDefaults]setValue:[[dis objectForKey:@"language"] objectForKey:@"name"] forKey:@"userlanguage"];
+              [[NSUserDefaults standardUserDefaults] synchronize];
+
+              [self stopAnimation];
+              TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
+              vc.userID = self.auth_token;
+              [self.navigationController pushViewController:vc animated:YES];
+          }];
+      } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+          [self removeWebView];
+          NSLog(@"%@",task.responseString);
+          SignUpViewController *vcSignUp = [self.storyboard instantiateViewControllerWithIdentifier:@"signupID"];
+          vcSignUp.btnTag = self.btnTag;
+          vcSignUp.isGoogle = YES;
+          vcSignUp.strGPlusMailId = [dictUserInfo objectForKey:@"email"];
+          [self.navigationController pushViewController:vcSignUp animated:YES];
+          [self stopAnimation];
+      }];
+}
+
 
 #pragma mark - Add activity indicator
+/**************************************************************************************************
+ Function to add and show activity indicaor
+ **************************************************************************************************/
 - (void)addActivityIndicator {
+
     vwOverlay = [[UIView alloc]initWithFrame:self.view.frame];
     vwOverlay.backgroundColor = [UIColor clearColor];
     [vwOverlay setHidden:YES];
@@ -607,12 +708,14 @@ static NSString * const kClientId = CLIEND_ID;
 }
 
 - (void)startAnimation {
+
     [vwOverlay setHidden:NO];
     [activityIndicator setHidden:NO];
     [activityIndicator startAnimating];
 }
 
 - (void)stopAnimation {
+
     [vwOverlay setHidden:YES];
     [activityIndicator setHidden:YES];
     [activityIndicator stopAnimating];

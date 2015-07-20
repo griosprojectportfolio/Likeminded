@@ -1,6 +1,5 @@
 //
 //  AppApi.m
-//  Rondogo
 //
 //  Created by GrepRuby3 on 14/03/15.
 //  Copyright (c) 2015 GrepRuby3. All rights reserved.
@@ -9,7 +8,7 @@
 #import "AppApi.h"
 
 /* API Constants */
-static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"https://a-like-staging.herokuapp.com";
+static NSString * const kAppAPIBaseURLString = @"https://likeminded.co";
 
 @interface AppApi ()
 
@@ -35,7 +34,7 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
 
 /* API Initialization */
 
--(id)initWithBaseURL:(NSURL *)url {
+- (id)initWithBaseURL:(NSURL *)url {
     self = [super initWithBaseURL:url];
     if (!self) {
         return nil;
@@ -45,7 +44,7 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
 
 /* API Deallocation */
 
--(void)dealloc {
+- (void)dealloc {
     
 }
 
@@ -82,11 +81,10 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
                                 failure:(void (^)(AFHTTPRequestOperation *task, NSError *error))failureBlock {
 
     NSString *url = [NSString stringWithFormat:@"%@%@",kAppAPIBaseURLString, method];
-
     AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
     NSString *auth_Token = [[NSUserDefaults standardUserDefaults]valueForKey:@"auth_token"];
-    [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:@"auth-Token"];
-    operationManager.requestSerializer.timeoutInterval = 60;
+    [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:AUTH_TOKEN];
+    operationManager.requestSerializer.timeoutInterval = 210;
     return [operationManager POST:url parameters:aParams success:^(AFHTTPRequestOperation *task, id responseObject) {
         if(successBlock){
             @try {
@@ -113,10 +111,9 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
                                                        failure:(void (^)(AFHTTPRequestOperation *task, NSError *error))failureBlock {
 
     NSString *url = [NSString stringWithFormat:@"%@%@",kAppAPIBaseURLString, method];
-
     AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
     NSString *auth_Token = [[NSUserDefaults standardUserDefaults]valueForKey:@"auth_token"];
-    [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:@"auth-Token"];
+    [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:AUTH_TOKEN];
 
     return [operationManager GET:url parameters:aParams success:^(AFHTTPRequestOperation *task, id responseObject) {
         if(successBlock){
@@ -171,9 +168,8 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
   NSString *url = [NSString stringWithFormat:@"%@/api/v1/profile",kAppAPIBaseURLString];
   
   AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
-  
   NSString *auth_Token = [[NSUserDefaults standardUserDefaults]valueForKey:@"auth_token"];
-  [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:@"auth-Token"];
+  [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:AUTH_TOKEN];
   [operationManager.requestSerializer setValue:@"2" forHTTPHeaderField:@"belief"];
   
   return [operationManager GET:url parameters:aParams success:^(AFHTTPRequestOperation *task, id responseObject) {
@@ -199,11 +195,9 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
                                failure:(void (^)(AFHTTPRequestOperation *task, NSError *error))failureBlock {
 
     NSString *strUrl = [NSString stringWithFormat:@"%@%@",kAppAPIBaseURLString, method];
-
     AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
-
     NSString *auth_Token = [[NSUserDefaults standardUserDefaults]valueForKey:@"auth_token"];
-    [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:@"auth-Token"];
+    [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:AUTH_TOKEN];
 
     return [operationManager DELETE:strUrl parameters:aParams success:^(AFHTTPRequestOperation *task, id responseObject) {
         if(successBlock){
@@ -214,9 +208,6 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
                 [self processExceptionBlock:task blockException:exception];
             }
         }
-
-
-
     } failure:^(AFHTTPRequestOperation *task, NSError *error) {
         if(failureBlock){
             [self processFailureBlock:task blockError:error];
@@ -231,10 +222,9 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
                                           failure:(void (^)(AFHTTPRequestOperation *task, NSError *error))failureBlock {
 
     NSString *url = [NSString stringWithFormat:@"%@%@",kAppAPIBaseURLString, method];
-
     AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
     NSString *auth_Token = [[NSUserDefaults standardUserDefaults]valueForKey:@"auth_token"];
-    [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:@"auth-Token"];
+    [operationManager.requestSerializer setValue:auth_Token forHTTPHeaderField:AUTH_TOKEN];
 
     return [operationManager PUT:url parameters:aParams success:^(AFHTTPRequestOperation *task, id responseObject) {
         if(successBlock){
@@ -280,21 +270,15 @@ static NSString * const kAppAPIBaseURLString = @"https://www.voteatlas.com";//@"
     }];
 }
 
-
-
-
 #pragma mark- Process Exception and Failure Block
 
--(void)processExceptionBlock:(AFHTTPRequestOperation*)task blockException:(NSException*) exception{
+- (void)processExceptionBlock:(AFHTTPRequestOperation*)task blockException:(NSException*) exception{
     NSLog(@"Exception : %@",((NSException*)exception));
 }
 
-- (NSError*)processFailureBlock:(AFHTTPRequestOperation*) task blockError:(NSError*) error{
-    //Common Method for error handling
-    // Do some thing for error handling
+- (NSError *)processFailureBlock:(AFHTTPRequestOperation*) task blockError:(NSError*) error{
     NSLog(@"Error :%@",error);
     return nil;
 }
-
 
 @end

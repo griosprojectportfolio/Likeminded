@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ModerateViewController : UIViewController
+@interface SearchUserViewController : UIViewController
 
+@property (nonatomic, strong) IBOutlet UITableView *tbleVwUsers;
 @end

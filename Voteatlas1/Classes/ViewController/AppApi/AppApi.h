@@ -1,6 +1,5 @@
 //
 //  AppApi.h
-//  Rondogo
 //
 //  Created by GrepRuby3 on 14/03/15.
 //  Copyright (c) 2015 GrepRuby3. All rights reserved.

@@ -29,7 +29,6 @@
     lblStatement.frame = CGRectMake(lblStatement.frame.origin.x, lblStatement.frame.origin.y, rect.size.width, rect.size.height);
     lblStatement.text = objSupposeOppose.statement;
     lblStatement.userInteractionEnabled = NO;
-    NSLog(@"%@", NSStringFromCGRect(lblStatement.frame));
 }
 
 @end

@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-
 @interface ProfileViewController : UIViewController {
 
     IBOutlet UILabel *lblAgree;
@@ -17,13 +16,18 @@
     IBOutlet UILabel *lblNotCommon;
     IBOutlet UILabel *lblfanmails;
     IBOutlet UILabel *lblCommaon;
+    IBOutlet UILabel *lblUserName;
 
-    IBOutlet UILabel *lblAgreeHeading;
-    IBOutlet UILabel *lblTotVoateHeading;
-    IBOutlet UILabel *lblDisagreeHeading;
-    IBOutlet UILabel *lblNotCommonHeading;
-    IBOutlet UILabel *lblfanmailsHeading;
-    IBOutlet UILabel *lblCommaonHeading;
+    IBOutlet UIButton *btnAgreeHeading;
+    IBOutlet UIButton *btnTotVoateHeading;
+    IBOutlet UIButton *btnDisagreeHeading;
+    IBOutlet UIButton *btnNotCommonHeading;
+    IBOutlet UIButton *btnfanmailsHeading;
+    IBOutlet UIButton *btnCommaonHeading;
+    IBOutlet UIButton * btnEdit;
+    IBOutlet UIButton *btnSaveAboutMe;
+    IBOutlet UIButton *btnCancel;
+    IBOutlet UIButton *btnProfile;
 
     IBOutlet UIImageView *imgvwAgree;
     IBOutlet UIImageView *imgvwDisagree;
@@ -36,10 +40,12 @@
     IBOutlet UIButton *btnMyAccount;
     IBOutlet UIButton *btnAdmin;
     IBOutlet UISegmentedControl *segmentSupposeOppose;
+    IBOutlet UIToolbar *toolBarDone;
 }
 
 @property(nonatomic,strong)NSMutableDictionary *dictProfile;
-@property(nonatomic,strong)IBOutlet UIImageView *imgProfil;
+@property (nonatomic, strong) NSString *userName;
+@property(nonatomic,strong)IBOutlet UIImageView *imgVwProfile;
 @property(nonatomic,strong)IBOutlet UITableView *tableVwSupposeOppose;
 @property(nonatomic,strong)IBOutlet UITextView *txtVwAboutme;
 

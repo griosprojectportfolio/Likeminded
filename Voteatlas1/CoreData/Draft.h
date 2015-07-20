@@ -7,7 +7,20 @@
 //
 
 #import <CoreData/CoreData.h>
+#import <CoreData/CoreData.h>
 
 @interface Draft : NSManagedObject
+
+@property (nonatomic, retain) NSString *draftId;
+@property (nonatomic, retain) NSString *categories;
+@property (nonatomic, retain) NSString *langName;
+@property (nonatomic, retain) NSString *statement;
+@property (nonatomic, retain) NSString *languageId;
+@property (nonatomic, retain) NSNumber *auther;
+@property (nonatomic, retain) NSString *userId;
+
++ (void)entityWithDictionary:(NSDictionary *)aDictionaty inContext:(NSManagedObjectContext *)localContext;
+
+
 
 @end

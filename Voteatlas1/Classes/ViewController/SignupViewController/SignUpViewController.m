@@ -18,6 +18,7 @@
     int selectedLauguageId;
     UIView *vwOverlay;
     UIActivityIndicatorView *activityIndicator;
+    UIAlertView *alertVwVerify;
 }
 
 @property (nonatomic, strong)NSMutableArray *arryLanguage;
@@ -68,16 +69,7 @@
 #pragma mark - Set default UI
 - (void)defaulUISettings {
 
-    if (IS_IPHONE_4_OR_LESS) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG4.png"]];
-    } else if (IS_IPHONE_5) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG5.png"]];
-    } else if (IS_IPHONE_6) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6.png"]];
-    } else if (IS_IPHONE_6P) {
-        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BG6Pluse.png"]];
-    }
-
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[ConstantClass imageAccordingToPhone]];
     UIBarButtonItem *btnBack = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:self action:@selector(backBtnTapped)];
     btnBack.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setLeftBarButtonItem:btnBack];
@@ -143,6 +135,7 @@
         self.title = @"My Account";
         self.btnSignUp.hidden = YES;
         [self userInfofatch];
+        self.txtUserID.userInteractionEnabled = NO;
     } else {
         self.btnUpdate.hidden = YES;
     }
@@ -155,7 +148,6 @@
 #pragma mark - Add social type
 - (void)addUserDetailOfUser {
 
-    NSLog(@"%@",self.dictUserDetail);
     if (self.dictUserDetail.count != 0) {
         switch (self.btnTag) {
             case 1:
@@ -166,9 +158,6 @@
                 strid = [self.dictUserDetail valueForKey:@"id"];
                 strProvider = @"Twitter";
                 break;
-            case 3:
-                strid = [self.dictUserDetail valueForKey:@"id"];
-                strProvider = @"Google+";
             default:
                 break;
         }
@@ -180,7 +169,6 @@
 
     [self.view endEditing:YES];
     self.vScrollView.contentOffset = CGPointMake(0, 50);
-    NSLog(@"%@", NSStringFromCGRect(self.view.frame));
     [ActionSheetPicker displayActionPickerWithView:self.view datePickerMode:UIDatePickerModeDate selectedDate:[NSDate date] target:self action:@selector(setDateToField::) title:@"Select Date"];
 }
 
@@ -197,6 +185,7 @@
 
 #pragma mark - Language btn is tapped
 - (IBAction)languageBtnTapped:(id)sender {
+
     [self.view endEditing:YES];
     CGPoint point = CGPointMake(0, 100);
     if (IS_IPHONE_5) {
@@ -231,13 +220,11 @@
 
     NSDictionary *param = @{@"state": self.txtState.text};
     [self.api callGETUrl:param method:@"/api/v1/cities" success:^(AFHTTPRequestOperation *task, id responseObject) {
-        NSLog(@"%@",responseObject);
         self.arryCity = [[responseObject valueForKey:@"data"]valueForKey:@"cities"];
         if (self.arryCity.count == 0) {
             self.btnCity.hidden = YES;
         }
     } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-        NSLog(@"%@",error);
     }];
 }
 
@@ -245,7 +232,6 @@
 - (IBAction)cityBtnTapped:(id)sender {
 
     [self.view endEditing:YES];
-    NSLog(@"%f", self.vScrollView.frame.origin.y);
     [ActionSheetPicker displayActionPickerWithView:self.view data:self.arryCity selectedIndex:0 target:self action:@selector(setCityToField::) title:@"Ciy" width:320];
 }
 
@@ -257,7 +243,6 @@
 
 #pragma mark - Back button tapped
 - (void)backBtnTapped {
-
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -265,13 +250,12 @@
 - (IBAction)genderSegmenttapped:(id)sender{
 
     UISegmentedControl *segDetail = (UISegmentedControl *)sender;
-  NSInteger index = segDetail.selectedSegmentIndex;
-  
-  if (index == 0) {
-    self.gender = @"Male";
-  } else{
-    self.gender = @"Female";
-  }
+    NSInteger index = segDetail.selectedSegmentIndex;
+    if (index == 0) {
+        self.gender = @"Male";
+    } else{
+        self.gender = @"Female";
+    }
 }
 
 - (NSManagedObjectContext *)managedObjectContext {
@@ -300,49 +284,49 @@
     }
 
     if (self.txtname.text.length == 0) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter name." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter name." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [msgAlert show];
         return;
     }
 
     if (self.txtCountry.text.length == 0) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter country." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter country." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [msgAlert show];
         return;
     }
 
     if (self.txtState.text.length == 0) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter State." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter State." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [msgAlert show];
         return;
     }
 
     if (self.txtCity.text.length == 0) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter city." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter city." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [msgAlert show];
         return;
     }
 
     if (self.txtPostalCode.text.length == 0) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter postal Code." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter postal Code." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [msgAlert show];
         return;
     }
 
     if (self.txtDOB.text.length == 0) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter dob." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter dob." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [msgAlert show];
         return;
     }
 
     if (self.txtNewPassword.text.length < 7) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter password of atleast eight digits." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter password of atleast eight digits." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [msgAlert show];
         return;
     }
     if (![self.txtNewPassword.text isEqual:self.txtConfirmationPassword.text]) {
 
-      UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Password Not Matched" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+      UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Password Not Matched" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
       [msgAlert show];
         return;
     }
@@ -354,7 +338,6 @@
 - (void)userCreateNewAccount {
 
     NSMutableDictionary *dict;
-    NSLog(@"%@", strid);
     if (self.dictUserDetail.count != 0) {
         self.dictSocialUserDetail = [[NSMutableDictionary alloc] init];
         [self.dictSocialUserDetail setObject:strid forKey:@"facebook_token"];
@@ -393,26 +376,15 @@
         return;
     }
     [self.api callPostUrl:dict method:@"/api/v1/registrations" success:^(AFHTTPRequestOperation *task, id responseObject) {
+        [User deleteAllEntityObjects];
+        [MagicalRecord setupCoreDataStackWithStoreNamed:@"Voteatlas"];
 
-    NSLog(@"%@",responseObject);
-    NSMutableDictionary *dictuser = [responseObject objectForKey:@"data"];
-    auth_token = [dictuser objectForKey:@"auth_token"];
-    [[NSUserDefaults standardUserDefaults]setValue:auth_token forKey:@"auth_token"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-
-    NSMutableArray *arr = [NSMutableArray arrayWithObject:dictuser];
-    [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-        [User entityFromArray:arr inContext:localContext];
-    }];
-
-    TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
-    vc.userID = auth_token;
-    [self.navigationController pushViewController:vc animated:YES];
-    [self hideActivityIndicator];
-  } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+       alertVwVerify = [[UIAlertView alloc]initWithTitle:@"Message" message:@"You must verify your account prior to proceeding to your account." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alertVwVerify show];
+        [self hideActivityIndicator];
+    } failure:^(AFHTTPRequestOperation *task, NSError *error) {
 
       [self hideActivityIndicator];
-      NSLog(@"%@",task.responseString);
       NSString *jsonMessage = task.responseString; //@"@{sss:asdasd, asd:asdasd}";//
       NSData *data = [jsonMessage dataUsingEncoding:NSUTF8StringEncoding];
       id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
@@ -438,10 +410,9 @@
     }
     [self.api callGETUrl:nil method:@"/api/v1/languages" success:^(AFHTTPRequestOperation *task, id responseObject) {
 
-        NSLog(@"%@",responseObject);
         NSArray *arryLanguage = [[responseObject valueForKey:@"data"]valueForKey:@"language"];
-
         for (NSDictionary *dictResponse in arryLanguage) {
+
             NSString *laungID;
             NSString *lName;
             laungID = [dictResponse objectForKey:@"id"];
@@ -450,22 +421,20 @@
             [self.arryLanguage addObject:lName];
             [self.arryLanguageId addObject:laungID];
         }
-
   } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-      NSLog(@"%@",error);
   }];
 }
 
 #pragma mark - UIText field Delegates
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
-  [textField resignFirstResponder];
-  return  YES;
+
+    [textField resignFirstResponder];
+    return  YES;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
 
     activetextfield = textField;
-
     int yAxis = 100;
     if (IS_IPHONE_5|IS_IPHONE_4_OR_LESS) {
         yAxis = 230;
@@ -487,25 +456,21 @@
 
         NSDictionary *param = @{@"country": self.txtCountry.text};
         [self.api callGETUrl:param method:@"/api/v1/states" success:^(AFHTTPRequestOperation *task, id responseObject) {
-            NSLog(@"%@",responseObject);
             self.arryState = [[responseObject valueForKey:@"data"]valueForKey:@"states"];
             if (self.arryState.count == 0) {
                 self.btnState.hidden = YES;
             }
         } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-            NSLog(@"%@",error);
         }];
     } else if (textField == self.txtState) {
 
         NSDictionary *param = @{@"state": self.txtState.text};
         [self.api callGETUrl:param method:@"/api/v1/cities" success:^(AFHTTPRequestOperation *task, id responseObject) {
-            NSLog(@"%@",responseObject);
             self.arryCity = [[responseObject valueForKey:@"data"]valueForKey:@"cities"];
             if (self.arryCity.count == 0) {
                 self.btnCity.hidden = YES;
             }
         } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-            NSLog(@"%@",error);
         }];
     }
     self.vScrollView.contentOffset = CGPointMake(0,-64);
@@ -521,6 +486,8 @@
     self.txtCountry.text = userObject.country;
     self.txtState.text = userObject.state;
     self.txtCity.text = userObject.city;
+    self.txtPLanguage.text = [[NSUserDefaults standardUserDefaults]valueForKey:@"userlanguage"];
+    self.txtPostalCode.text = userObject.postalCode;
     NSString *strGender = userObject.gender;
     if ([strGender isEqualToString:@"Female"]) {
         [self.segmentGender setSelectedSegmentIndex:1];
@@ -530,8 +497,9 @@
 }
 
 #pragma mark - Update button tapped
-- (IBAction)UpdateTapped:(id)sender{
+- (IBAction)UpdateTapped:(id)sender {
 
+    [self showActivityIndicator];
     NSMutableDictionary *dictdata = [[NSMutableDictionary alloc] init];
     [dictdata setObject:self.txtUserID.text forKey:@"email"];
     [dictdata setObject:self.txtNewPassword.text forKey:@"password"];
@@ -548,22 +516,28 @@
     [dict setObject:dictdata forKey:@"user"];
 
     [self.api callPutUrlWithHeader:dict method:@"/api/v1/update" success:^(AFHTTPRequestOperation *task, id responseObject) {
-        NSLog(@"%@",responseObject);
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Updated Successfuly" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-    } failure:^(AFHTTPRequestOperation *task, NSError *error) {
-       NSLog(@"%@",task.responseString);
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Data Not Updated" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:nil, nil];
-        [alert show];
-    }];
 
+        NSDictionary *dictUser = [responseObject valueForKey:@"data"];
+         NSMutableArray *arr = [NSMutableArray arrayWithObject:dictUser];
+         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+             [User entityFromArray:arr inContext:localContext];
+         } completion:^(BOOL success, NSError *error) {
+            [self hideActivityIndicator];
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Success!!" message:@"Update profile successfuly." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [alert show];
+         }];
+    } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Data not updated." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:nil, nil];
+        [alert show];
+        [self hideActivityIndicator];
+    }];
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
-    if (buttonIndex == 0) {
-            //ProfileViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfilID"];
-            //[self.navigationController popViewControllerAnimated:YES];
-    }
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+
+  if (alertView == alertVwVerify) {
+    [self.navigationController popViewControllerAnimated:YES];
+  }
 }
 
 #pragma mark - Add Activity indicator

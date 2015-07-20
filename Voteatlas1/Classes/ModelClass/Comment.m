@@ -10,4 +10,6 @@
 
 @implementation Comment
 
+@synthesize name, comment, userName;
+
 @end

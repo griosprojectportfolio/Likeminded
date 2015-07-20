@@ -8,6 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FlagView : UIView
+
+@protocol FlagDelegate <NSObject>
+
+- (void)cancelFlagBtnTapped;
+- (void)sendFlag:(NSString *)strFlagStatus;
+
+@end
+
+@interface FlagView : UIView <UITextViewDelegate>{
+    UITextView *txtVw;
+    UIToolbar *toolbar;
+}
+
+@property (unsafe_unretained)id <FlagDelegate>delegate;
+
 
 @end

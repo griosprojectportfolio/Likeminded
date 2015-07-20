@@ -10,11 +10,14 @@
 
 @protocol CustomButtonsDelegate <NSObject>
 
+@optional
+
 - (void)shareBtnTapped;
 - (void)mapBtnTapped;
 - (void)supportBtnTapped;
 - (void)opposeBtnTapped;
 - (void)keepmePostedBtnTapped;
+- (void)fileItBtnTapped;
 
 @end
 
@@ -23,13 +26,12 @@
     IBOutlet UIButton *btnLike;
     IBOutlet UIButton *btnUnlike;
     IBOutlet UIButton *btnArchive;
-    IBOutlet UIButton *btnMap;
     IBOutlet UIImageView *imgVwlockOppose;
     IBOutlet UIVisualEffectView *blurVw;
 }
 
+@property (nonatomic, strong) IBOutlet UIButton *btnMap;
 @property (nonatomic, strong) IBOutlet UIButton *btnNotes;
-
 @property (nonatomic, strong) IBOutlet UIButton *btnShare;
 @property (nonatomic, strong) IBOutlet UIImageView *imgVwlockSupport;
 @property (nonatomic) BOOL isDetailVw;

@@ -7,10 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <GoogleOpenSource/GoogleOpenSource.h>
-#import <GooglePlus/GooglePlus.h>
 
-@interface LogInViewController : UIViewController<UITextFieldDelegate>{
+@interface LogInViewController : UIViewController<UITextFieldDelegate, UIWebViewDelegate>{
     NSString *user;
     NSString *password;
     NSArray *userarr;
@@ -19,6 +17,9 @@
     IBOutlet UIButton *btnFb;
     IBOutlet UIButton *btnTwitter;
     IBOutlet UIButton *btnGooglePlus;
+    UIWebView *webview;
+    UIView *vwOverlayWebView;
+    NSMutableData *receivedData;
 }
 
 @property(nonatomic)NSInteger btnTag;
@@ -43,10 +44,10 @@
 
 @property(nonatomic,strong)NSString *userName;
 @property(nonatomic,strong)NSString *password;
+@property (nonatomic) NSInteger schemaBeliefId;
 
 @property(nonatomic,strong)IBOutlet CustomTextField *txtUserID;
 @property(nonatomic,strong)IBOutlet CustomTextField *txtPassword;
-@property (nonatomic, strong) GPPSignInButton *signInButton;
 
 
 -(IBAction)loginButtonTapped:(id)sender;

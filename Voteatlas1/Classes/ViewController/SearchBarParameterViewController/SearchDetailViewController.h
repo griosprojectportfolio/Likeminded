@@ -8,6 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SearchDetailViewController : UIViewController
+@interface SearchDetailViewController : UIViewController {
+
+    IBOutlet CustomTextField *txtFldJustAdded;
+    IBOutlet CustomTextField *txtFldGlobal;
+    IBOutlet CustomTextField *txtFldAll;
+    IBOutlet UIImageView *imgVwBgImg;
+    IBOutlet UISegmentedControl *segmentTrash;
+    IBOutlet UIButton *btnApply;
+    IBOutlet UIButton *btnNotApply;
+}
 
 @end
