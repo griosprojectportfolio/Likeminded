@@ -18,10 +18,11 @@
 - (void)opposeBtnTapped;
 - (void)keepmePostedBtnTapped;
 - (void)fileItBtnTapped;
+- (void)alertMassegeBtns;
 
 @end
 
-@interface CustomButtonsView : UIView <UIActionSheetDelegate> {
+@interface CustomButtonsView : UIView <UIActionSheetDelegate,UIAlertViewDelegate> {
 
     IBOutlet UIButton *btnLike;
     IBOutlet UIButton *btnUnlike;
@@ -42,5 +43,7 @@
 - (void)setFrameOfButtons:(NSInteger)extraSpace additionSpace:(NSInteger)space;
 - (void)instantiateAppApi;
 - (void)assignValuetoButton:(NSDictionary *)dictDiscopose;
+-(BOOL)isauth_Token_Exist;
+-(void) alertMassege;
 
 @end

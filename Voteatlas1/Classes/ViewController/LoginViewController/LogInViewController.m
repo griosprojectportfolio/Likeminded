@@ -72,6 +72,8 @@ NSString *visibleactions = GOOGLE_PLUS_VIVIBLE_ACTION;
 - (void)viewDidAppear:(BOOL)animated{
 
     [super viewDidAppear:animated];
+  NSLog(@"%@", self.navigationController.viewControllers);
+
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"Voteatlas"];
 }
 
@@ -224,7 +226,13 @@ NSString *visibleactions = GOOGLE_PLUS_VIVIBLE_ACTION;
             id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
             NSDictionary *dictMessage = (NSDictionary *)jsonResponse;
             NSString *msg = [NSString stringWithFormat:@"%@.", [dictMessage valueForKey:@"info"]];
+            if ([msg isKindOfClass:[NSNull class]]) {
+                    msg = @"Please try again.";
+            }
             UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:@"Alert"message:msg delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+            [alertVw show];
+        } else {
+            UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:@"Alert"message:@"Please try again. Server has been time out." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
             [alertVw show];
         }
     }];
@@ -239,6 +247,14 @@ NSString *visibleactions = GOOGLE_PLUS_VIVIBLE_ACTION;
     }
     return context;
 }
+
+#pragma mark - Close button tapped
+-(IBAction)closeButtonTapped:(id)sender{
+  TableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"TableViewID"];
+  [self.navigationController pushViewController:vc animated:NO];
+}
+
+
 
 #pragma mark - Sign Up button tapped
 /**************************************************************************************************
@@ -427,7 +443,7 @@ NSString *visibleactions = GOOGLE_PLUS_VIVIBLE_ACTION;
 
     if (![SLComposeViewController
           isAvailableForServiceType:SLServiceTypeTwitter]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"Go to settings for login with Twitter." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:TWITTER_CONNECT_ERROR delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         [alert show];
         return;
     } else {

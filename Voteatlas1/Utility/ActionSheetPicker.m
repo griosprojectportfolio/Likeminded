@@ -157,9 +157,7 @@
 	[pickerDateToolbar release];
 	
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-		
-        NSLog(@"Ipad");
-        
+
         [UIView animateWithDuration:0.5 animations:^(void) {
             
             [self.view addSubview:self.vwActionSheet];

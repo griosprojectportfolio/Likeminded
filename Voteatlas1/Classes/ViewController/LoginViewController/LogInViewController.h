@@ -33,6 +33,9 @@
 @property(nonatomic,strong)IBOutlet UIButton *btnLogIn;
 @property(nonatomic,strong)IBOutlet UIButton *btnSignUp;
 @property(nonatomic,strong)IBOutlet UIButton *btnForgotPass;
+//**********
+@property(nonatomic,strong)IBOutlet UIButton *btnClose;
+
 
 @property(nonatomic,strong) M13Checkbox *btnCheckRemeber;
 @property(nonatomic,strong)IBOutlet UILabel *lblRememberMe;
@@ -53,5 +56,6 @@
 -(IBAction)loginButtonTapped:(id)sender;
 -(IBAction)signupButtonTapped:(id)sender;
 -(IBAction)forgotPassButtonTapped:(id)sender;
+-(IBAction)closeButtonTapped:(id)sender;
 
 @end

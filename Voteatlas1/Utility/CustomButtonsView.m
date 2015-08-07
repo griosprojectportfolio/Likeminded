@@ -7,6 +7,7 @@
 //
 
 #import "CustomButtonsView.h"
+#import  "LogInViewController.h"
 
 @implementation CustomButtonsView
 @synthesize delegate, btnShare, imgVwlockSupport, btnNotes, isDetailVw;
@@ -14,6 +15,27 @@
 - (void)instantiateAppApi {
     self.api = [AppApi sharedClient];
 }
+
+-(BOOL)isauth_Token_Exist {
+  NSString *auth_Token = [[NSUserDefaults standardUserDefaults]valueForKey:@"auth_token"];
+  if(auth_Token){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+-(void) alertMassege {
+  UIAlertView *alertVwAnonymousAuthor = [[UIAlertView alloc]initWithTitle:nil message:@"You must login or create an account before you use this functionality." delegate:nil cancelButtonTitle:@"Ok"otherButtonTitles:nil];
+  [alertVwAnonymousAuthor show];
+}
+
+//- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+//  if(buttonIndex == 0){
+//    LogInViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"login"];
+//    [self.navigationController pushViewController:vc animated:true];
+//  }
+//}
 
 - (void)setFrameOfButtons:(NSInteger)extraSpace additionSpace:(NSInteger)space {
 
@@ -137,6 +159,7 @@
 #pragma mark - Suppose btn tapped
 
 - (IBAction)likeBtnTapped:(id)sender {
+  if([self isauth_Token_Exist]){
 
     if ([btnLike.imageView.image isEqual:[UIImage imageNamed:@"4.png"]]) {
 
@@ -149,6 +172,10 @@
 
         [self getApiCallToSupport:@"lock"];
     }
+  }else{
+    [self.delegate alertMassegeBtns];
+  }
+  
 }
 
 - (void)getApiCallToSupport:(NSString*)typeOfLock {
@@ -209,7 +236,8 @@
 #pragma mark - Oppose btn tapped
 
 - (IBAction)unlikeBtnTapped:(id)sender {
-
+  if([self isauth_Token_Exist]){
+  
     if ([btnUnlike.imageView.image isEqual:[UIImage imageNamed:@"5.png"]]) {
 
         if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"lock.png"]]) {
@@ -220,6 +248,10 @@
     } else {
         [self opposeApiCall:@"lock"];
     }
+  }else{
+    [self.delegate alertMassegeBtns];
+  }
+  
 }
 
 - (void)opposeApiCall:(NSString*)typeOfLock{
@@ -278,11 +310,17 @@
 #pragma mark - File it btn tapped
 
 - (IBAction)downloadOrTranshBtnTapped:(id)sender {
+  if([self isauth_Token_Exist]){
+  
     if ([btnArchive.imageView.image isEqual:[UIImage imageNamed:@"7_unselect.png"]]){
         return;
     }
     [self getApiCallToFileIt];//call api
-    }
+  }else{
+    [self.delegate alertMassegeBtns];
+  }
+  
+}
 
 - (void)getApiCallToFileIt {
 
@@ -311,24 +349,30 @@
 }
 
 - (IBAction)shareBtnTapped:(id)sender {
+  
     if ([self.delegate respondsToSelector:@selector(shareBtnTapped)]) {
         [self.delegate shareBtnTapped];
     }
+  
 }
 
 - (IBAction)mapBtnTapped:(id)sender {
+  
     [self.btnMap setImage:[UIImage imageNamed:@"9.png"] forState:UIControlStateNormal];
 
     if ([self.delegate respondsToSelector:@selector(mapBtnTapped)]) {
         [self.delegate mapBtnTapped];
     }
+  
 }
 
 - (IBAction)keepMePostedBtnTapped:(id)sender {
-        //[self.btnNotes setImage:[UIImage imageNamed:@"12.png"] forState:UIControlStateNormal];
+  
+  //[self.btnNotes setImage:[UIImage imageNamed:@"12.png"] forState:UIControlStateNormal];
     if ([self.delegate respondsToSelector:@selector(keepmePostedBtnTapped)]) {
         [self.delegate keepmePostedBtnTapped];
     }
+  
 }
 
 @end

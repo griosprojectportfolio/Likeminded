@@ -314,9 +314,9 @@
     }
 
     if (self.txtDOB.text.length == 0) {
-        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter dob." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [msgAlert show];
-        return;
+//        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter dob." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+//        [msgAlert show];
+//        return;
     }
 
     if (self.txtNewPassword.text.length < 7) {
@@ -332,7 +332,6 @@
     }
     [self showActivityIndicator];
     [self userCreateNewAccount];
-  
 }
 
 - (void)userCreateNewAccount {
@@ -352,7 +351,9 @@
         [self.dictSocialUserDetail setObject:self.txtname.text forKey:@"name"];
         [self.dictSocialUserDetail setObject:[NSString stringWithFormat:@"%i", selectedLauguageId] forKey:@"language_id"];
         [self.dictSocialUserDetail setObject:self.gender forKey:@"gender"];
-
+        if (self.txtDOB.text.length != 0){
+            [self.dictSocialUserDetail setObject:self.txtDOB.text forKey:@"dob"];
+        }
         dict = [[NSMutableDictionary alloc]init];
         [dict setObject:self.dictSocialUserDetail forKey:@"user"];
     } else {
@@ -367,9 +368,11 @@
         [dictdata setObject:self.txtname.text forKey:@"name"];
         [dictdata setObject:[NSString stringWithFormat:@"%i", selectedLauguageId] forKey:@"language_id"];
         [dictdata setObject:self.gender forKey:@"gender"];
+        if (self.txtDOB.text.length != 0){
+            [dictdata setObject:self.txtDOB.text forKey:@"dob"];
+        }
         dict = [[NSMutableDictionary alloc]init];
         [dict setObject:dictdata forKey:@"user"];
-
     }
 
     if ([ConstantClass checkNetworkConection] == NO) {

@@ -26,10 +26,11 @@
 - (void)fileItBtnTapped:(NSInteger)cellTag;
 - (void)profileBtnTapped:(Belief *)belief;
 - (void)linkBtnTapped:(Belief *)belief;
+-(void) alertMassegeBtn;
 
 @end
 
-@interface TableViewCell : UITableViewCell <CustomButtonsDelegate, UIGestureRecognizerDelegate> {
+@interface TableViewCell : UITableViewCell <CustomButtonsDelegate, UIGestureRecognizerDelegate,UIAlertViewDelegate,UIAlertViewDelegate> {
     NSURL *_urlToLoad;
     IBOutlet UIButton *btnPlay;
     IBOutlet UIButton *btnDiscloser;
@@ -44,6 +45,8 @@
 @property (nonatomic, strong) IBOutlet UILabel *lblStatement;
 @property (nonatomic, strong) IBOutlet UIImageView *imgProfilPic;
 @property (nonatomic, strong) IBOutlet UIImageView *displayImage;
+
+@property (nonatomic, strong) IBOutlet UIImageView *imgViewContent;
 
 @property (nonatomic, strong) IBOutlet UIButton *supprtBtn;
 @property (nonatomic, strong) IBOutlet UIButton  *btnProfilPic;
@@ -63,5 +66,6 @@
 @property (unsafe_unretained)id<CustomeTableViewDelegate> delegate;
 
 - (void)setValueInTableVw:(Belief*)belief withVwController:(TableViewController*)vwController forRow:(NSInteger)row withCellWidth:(CGFloat)width withLaguagleId:(NSNumber*)languageId;
+-(BOOL)isauth_Token_Exist;
 
 @end

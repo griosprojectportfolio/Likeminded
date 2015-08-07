@@ -32,6 +32,7 @@
     [self.contentView addSubview:effectView];
 }
 
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 }
@@ -81,23 +82,43 @@
     [btnDiscloser addTarget:self action:@selector(navigateToCommentBtnTapped) forControlEvents:UIControlEventTouchUpInside];
     btnFlag.hidden = YES;
 
-    btnTranslation.frame = CGRectMake(width - 50, self.displayImage.frame.origin.y - 27, 30, 25);
+    btnTranslation.frame = CGRectMake(width - 50, self.displayImage.frame.origin.y - 27, 30,25);
     [btnTranslation addTarget:self action:@selector(translateBtnTapped) forControlEvents:UIControlEventTouchUpInside];
-    btnTranslation.backgroundColor = [UIColor setCustomColorOfTextField];
+     btnTranslation.backgroundColor = [UIColor setCustomColorOfTextField];
+//   // [btnTranslation setImage:[UIImage imageNamed:@"10"] forState:UIControlStateNormal];
+//    [btnTranslation setBackgroundImage: [UIImage imageNamed:@"10"]forState:UIControlStateNormal];
     btnTranslation.layer.cornerRadius = 5.0;
     btnTranslation.hidden = NO;
 
     if ([belief.languageId isEqualToNumber:languageId]) {
         btnTranslation.hidden = YES;
+    }else{
+      btnTranslation.hidden = NO;
     }
     btnPlay.tintColor = [UIColor setCustomColorOfTextField];
     if ([self.objBelief.thumbImage_Url isKindOfClass:[NSNull class]] && ![belief.imageUrl isEqual:[NSNull class]]) {
         self.displayImage.image = [UIImage imageNamed:@"video_thumb"];
     }
+ 
+  //********Sagar*************
+  if(self.objBelief.videoUrl.length == 0 && self.objBelief.youtubeUrl.length == 0){
+    
+  if(self.objBelief.imageUrl.length == 0){
+    self.imgViewContent.hidden = false;
+   self.imgViewContent.image = [UIImage imageNamed:@"no_image"];
+  }else{
+    self.imgViewContent.hidden = false;
+    [self.imgViewContent sd_setImageWithURL:[NSURL URLWithString:self.objBelief.imageUrl] placeholderImage:nil];
+  }
+  }else{
+    self.imgViewContent.hidden = true;
+  }
+  //***********
 
     if ([self.objBelief.thumbImage_Url isKindOfClass:[NSNull class]]) {
         if (belief.imageUrl.length == 0) {
             self.displayImage.image = [UIImage imageNamed:@"video_thumb"];
+          
         }
     }
 
@@ -188,72 +209,95 @@
   });
 }
 
+-(void)alertMassegeBtns{
+  [self.delegate alertMassegeBtn];
+}
 
 - (void)profileBtnTapped:(id)sender {
+  
     if ([self.delegate respondsToSelector:@selector(profileBtnTapped:)]){
         [self.delegate profileBtnTapped:self.objBelief];
     }
+  
 }
 
 - (void)translateBtnTapped {
+  
     if ([self.delegate respondsToSelector:@selector(translatebtnTapped:)]){
         [self.delegate translatebtnTapped:self.objBelief];
     }
+  
 }
 
 #pragma mark - Custom Button Delegates
 - (void)shareBtnTapped {
+  
     if ([self.delegate respondsToSelector:@selector(sharebtnTapped:)]){
         [self.delegate sharebtnTapped:self.objBelief];
     }
+ 
 }
 
 - (void)mapBtnTapped {
+  
     if ([self.delegate respondsToSelector:@selector(mapbtnTapped:withCellTag:)]){
         [self.delegate mapbtnTapped:self.objBelief withCellTag:self.tag];
     }
+  
 }
 
 - (void)keepmePostedBtnTapped {
+  
     if ([self.delegate respondsToSelector:@selector(keepmePostedBtnTapped:withTag:)]){
         [self.delegate keepmePostedBtnTapped:self.objBelief withTag:self.tag];
     }
+  
 }
 
 - (void)supportBtnTapped {
+ 
     if ([self.delegate respondsToSelector:@selector(supportOpposeBtnTapped)]){
         [self.delegate supportOpposeBtnTapped];
     }
+  
 }
 
 - (void)opposeBtnTapped {
+ 
     if ([self.delegate respondsToSelector:@selector(supportOpposeBtnTapped)]){
         [self.delegate supportOpposeBtnTapped];
     }
+  
 }
 
 - (void)videoBtnTapped {
     if ([self.delegate respondsToSelector:@selector(videoBtnTapped:)]){
         [self.delegate videoBtnTapped:self.objBelief];
     }
-}
+  }
 
 - (void)navigateToCommentBtnTapped {
+  
     if ([self.delegate respondsToSelector:@selector(navigateToCommentBtnTapped:)]){
         [self.delegate navigateToCommentBtnTapped:self.objBelief];
     }
+  
 }
 
 - (void)fileItBtnTapped {
+  
   if ([self.delegate respondsToSelector:@selector(fileItBtnTapped:)]){
     [self.delegate fileItBtnTapped:self.tag];
   }
+  
 }
 
 - (void)linkBtnTapped {
+  
   if ([self.delegate respondsToSelector:@selector(linkBtnTapped:)]){
     [self.delegate linkBtnTapped:self.objBelief];
   }
+  
 }
 
 - (void)flageBtnTapped:(id)sender {

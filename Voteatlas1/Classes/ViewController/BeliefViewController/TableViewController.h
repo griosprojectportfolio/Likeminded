@@ -12,7 +12,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "HCYoutubeParser.h"
 
-@interface TableViewController : UIViewController <UISearchBarDelegate,UIActionSheetDelegate,MFMailComposeViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate> {
+@interface TableViewController : UIViewController <UISearchBarDelegate,UIActionSheetDelegate,MFMailComposeViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate,UIAlertViewDelegate> {
 
     MFMailComposeViewController *mailComposer;
 }
@@ -28,5 +28,7 @@
 @property (nonatomic) NSInteger schemaBeliefId;
 
 - (void)profileBtnTapped:(id)sender;
+-(BOOL)isauth_Token_Exist;
+-(void) alertMassege;
 
 @end

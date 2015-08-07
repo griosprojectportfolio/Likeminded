@@ -118,7 +118,7 @@ static NSString * const kAppAPIBaseURLString = @"https://likeminded.co";
     return [operationManager GET:url parameters:aParams success:^(AFHTTPRequestOperation *task, id responseObject) {
         if(successBlock){
             @try {
-                NSLog(@"Create Session");
+                NSLog(@"Create Session*******%@",responseObject);
                 successBlock(task, responseObject);
             }
             @catch (NSException *exception) {

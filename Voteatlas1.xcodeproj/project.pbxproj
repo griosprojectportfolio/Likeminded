@@ -78,7 +78,6 @@
 		0A98A33B1AE52A3400A08BB2 /* CustomCellOfSupposeOppose.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A98A3251AE52A3400A08BB2 /* CustomCellOfSupposeOppose.m */; };
 		0A98A33C1AE52A3400A08BB2 /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A98A3271AE52A3400A08BB2 /* ProfileViewController.m */; };
 		0A98A33D1AE52A3400A08BB2 /* SupposeOppose.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A98A3291AE52A3400A08BB2 /* SupposeOppose.m */; };
-		0A98A33E1AE52A3400A08BB2 /* SignUpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A98A32C1AE52A3400A08BB2 /* SignUpViewController.m */; };
 		0A98A33F1AE52A3400A08BB2 /* SupportCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A98A32F1AE52A3400A08BB2 /* SupportCommentViewController.m */; };
 		0A98A3401AE52A3400A08BB2 /* SupportOpposeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A98A3311AE52A3400A08BB2 /* SupportOpposeCell.m */; };
 		0A98A3411AE52A3400A08BB2 /* SupportOpposeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A98A3321AE52A3400A08BB2 /* SupportOpposeCell.xib */; };
@@ -92,6 +91,7 @@
 		0ACB41AA1AD25500000113C2 /* MapLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB41A91AD25500000113C2 /* MapLocations.m */; };
 		0ACD9C551AC00431005A84FF /* ActionSheetPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD9C541AC00431005A84FF /* ActionSheetPicker.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		0AD2FDC21AC0213900329AB3 /* M13Checkbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AD2FDC11AC0213800329AB3 /* M13Checkbox.m */; };
+		0AEA01C11B68A0FB0003FEC3 /* SignUpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AEA01C01B68A0FB0003FEC3 /* SignUpViewController.m */; };
 		0AFC77F91AE930F70006BD82 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AFC77F81AE930F60006BD82 /* Social.framework */; };
 		11DD18CE1A407B9100781035 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18CD1A407B9100781035 /* Foundation.framework */; };
 		11DD18D01A407B9100781035 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18CF1A407B9100781035 /* CoreGraphics.framework */; };
@@ -251,7 +251,6 @@
 		0A98A3281AE52A3400A08BB2 /* SupposeOppose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SupposeOppose.h; sourceTree = "<group>"; };
 		0A98A3291AE52A3400A08BB2 /* SupposeOppose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SupposeOppose.m; sourceTree = "<group>"; };
 		0A98A32B1AE52A3400A08BB2 /* SignUpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignUpViewController.h; sourceTree = "<group>"; };
-		0A98A32C1AE52A3400A08BB2 /* SignUpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignUpViewController.m; sourceTree = "<group>"; };
 		0A98A32E1AE52A3400A08BB2 /* SupportCommentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SupportCommentViewController.h; sourceTree = "<group>"; };
 		0A98A32F1AE52A3400A08BB2 /* SupportCommentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SupportCommentViewController.m; sourceTree = "<group>"; };
 		0A98A3301AE52A3400A08BB2 /* SupportOpposeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SupportOpposeCell.h; sourceTree = "<group>"; };
@@ -276,6 +275,7 @@
 		0ACD9C541AC00431005A84FF /* ActionSheetPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetPicker.m; sourceTree = "<group>"; };
 		0AD2FDC01AC0213800329AB3 /* M13Checkbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = M13Checkbox.h; sourceTree = "<group>"; };
 		0AD2FDC11AC0213800329AB3 /* M13Checkbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = M13Checkbox.m; sourceTree = "<group>"; };
+		0AEA01C01B68A0FB0003FEC3 /* SignUpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignUpViewController.m; sourceTree = "<group>"; };
 		0AFC77F81AE930F60006BD82 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		11DD18CA1A407B9100781035 /* Voteatlas1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Voteatlas1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		11DD18CD1A407B9100781035 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -737,7 +737,7 @@
 			isa = PBXGroup;
 			children = (
 				0A98A32B1AE52A3400A08BB2 /* SignUpViewController.h */,
-				0A98A32C1AE52A3400A08BB2 /* SignUpViewController.m */,
+				0AEA01C01B68A0FB0003FEC3 /* SignUpViewController.m */,
 			);
 			path = SignupViewController;
 			sourceTree = "<group>";
@@ -1040,7 +1040,6 @@
 				0AD2FDC21AC0213900329AB3 /* M13Checkbox.m in Sources */,
 				0A98A3351AE52A3400A08BB2 /* TableViewController.m in Sources */,
 				0A6679281ACBB750009CB2BC /* NSData+ImageContentType.m in Sources */,
-				0A98A33E1AE52A3400A08BB2 /* SignUpViewController.m in Sources */,
 				0A6679311ACBB750009CB2BC /* UIImage+GIF.m in Sources */,
 				0A4D34101ACBDD150047592F /* CustomTextField.m in Sources */,
 				0A66792C1ACBB750009CB2BC /* SDWebImageDownloader.m in Sources */,
@@ -1081,6 +1080,7 @@
 				0A66219A1AD7BF470082F3AC /* SearchUserCell.m in Sources */,
 				0A626E981AC95DE000331C50 /* Voteatlas.xcdatamodeld in Sources */,
 				0A6679301ACBB750009CB2BC /* UIButton+WebCache.m in Sources */,
+				0AEA01C11B68A0FB0003FEC3 /* SignUpViewController.m in Sources */,
 				11DD18DE1A407B9100781035 /* AppDelegate.m in Sources */,
 				0A6679291ACBB750009CB2BC /* SDImageCache.m in Sources */,
 				11DD18DA1A407B9100781035 /* main.m in Sources */,
@@ -1159,8 +1159,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Matthew Johnson (A77CNHKCYR)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Matthew Johnson (A77CNHKCYR)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1178,7 +1178,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "eae27aec-15b5-44ca-8fd0-3a4528afbc38";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1199,8 +1199,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Matthew Johnson (A77CNHKCYR)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Matthew Johnson (A77CNHKCYR)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1211,7 +1211,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "eae27aec-15b5-44ca-8fd0-3a4528afbc38";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1235,7 +1235,7 @@
 				INFOPLIST_FILE = "Voteatlas1/Voteatlas1-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "fed3a850-e8ec-436a-8908-10034079f2a1";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1259,7 +1259,7 @@
 				INFOPLIST_FILE = "Voteatlas1/Voteatlas1-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "fed3a850-e8ec-436a-8908-10034079f2a1";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
