@@ -106,6 +106,8 @@
 		11DD18EF1A407B9200781035 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18D11A407B9100781035 /* UIKit.framework */; };
 		11DD18F71A407B9200781035 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 11DD18F51A407B9200781035 /* InfoPlist.strings */; };
 		11DD18F91A407B9200781035 /* Voteatlas1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DD18F81A407B9200781035 /* Voteatlas1Tests.m */; };
+		17D515FC1BEA416600044A0C /* FaqsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D515FB1BEA416600044A0C /* FaqsViewController.m */; settings = {ASSET_TAGS = (); }; };
+		17D819391BECEE0D00D5E329 /* UsersListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D819381BECEE0D00D5E329 /* UsersListView.m */; settings = {ASSET_TAGS = (); }; };
 		4E64F6BF5319D955AB102007 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46A385C332818D52BE0ECC3A /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -294,6 +296,10 @@
 		11DD18F41A407B9200781035 /* Voteatlas1Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Voteatlas1Tests-Info.plist"; sourceTree = "<group>"; };
 		11DD18F61A407B9200781035 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		11DD18F81A407B9200781035 /* Voteatlas1Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Voteatlas1Tests.m; sourceTree = "<group>"; };
+		17D515FA1BEA416600044A0C /* FaqsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaqsViewController.h; sourceTree = "<group>"; };
+		17D515FB1BEA416600044A0C /* FaqsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaqsViewController.m; sourceTree = "<group>"; };
+		17D819371BECEE0C00D5E329 /* UsersListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsersListView.h; sourceTree = "<group>"; };
+		17D819381BECEE0D00D5E329 /* UsersListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsersListView.m; sourceTree = "<group>"; };
 		3B12B4C32671A27C6495AA3E /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		3D2F6F8D506264140D895611 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		46A385C332818D52BE0ECC3A /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -561,6 +567,7 @@
 		0A772C241AC55FA300B99BEF /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				17D515F91BEA412D00044A0C /* FaqsViewController */,
 				0A77CC911AFC8B1600061467 /* BrowserViewController */,
 				0A883E611AB6BF6F00C0A41E /* AppDelegate */,
 				0A98A30B1AE52A3400A08BB2 /* AppApi */,
@@ -670,6 +677,8 @@
 				0A98A3131AE52A3400A08BB2 /* TableViewController.m */,
 				0A9FE3591AFB8D6500BD4EE5 /* SearchCustomCell.h */,
 				0A9FE35A1AFB8D6500BD4EE5 /* SearchCustomCell.m */,
+				17D819371BECEE0C00D5E329 /* UsersListView.h */,
+				17D819381BECEE0D00D5E329 /* UsersListView.m */,
 			);
 			name = BeliefShowViewController;
 			path = BeliefViewController;
@@ -876,6 +885,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		17D515F91BEA412D00044A0C /* FaqsViewController */ = {
+			isa = PBXGroup;
+			children = (
+				17D515FA1BEA416600044A0C /* FaqsViewController.h */,
+				17D515FB1BEA416600044A0C /* FaqsViewController.m */,
+			);
+			path = FaqsViewController;
+			sourceTree = "<group>";
+		};
 		6152ECADCAB9BE5309DE53F0 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1036,6 +1054,7 @@
 				0A4082481AD3A27B00D04BBE /* CalloutAnnotationView.m in Sources */,
 				0A6679321ACBB750009CB2BC /* UIImage+MultiFormat.m in Sources */,
 				0A772C281AC55FC700B99BEF /* SearchDetailViewController.m in Sources */,
+				17D515FC1BEA416600044A0C /* FaqsViewController.m in Sources */,
 				0A71CD181AC2A31E00FC3FF1 /* CustomButtonsView.m in Sources */,
 				0AD2FDC21AC0213900329AB3 /* M13Checkbox.m in Sources */,
 				0A98A3351AE52A3400A08BB2 /* TableViewController.m in Sources */,
@@ -1076,6 +1095,7 @@
 				0A71A6641AC428AB00FB364A /* Reachability.m in Sources */,
 				0A98A3401AE52A3400A08BB2 /* SupportOpposeCell.m in Sources */,
 				0A71CD1D1AC2D29300FC3FF1 /* Belief.m in Sources */,
+				17D819391BECEE0D00D5E329 /* UsersListView.m in Sources */,
 				0A722CA31AD53EBF009888CB /* FlagView.m in Sources */,
 				0A66219A1AD7BF470082F3AC /* SearchUserCell.m in Sources */,
 				0A626E981AC95DE000331C50 /* Voteatlas.xcdatamodeld in Sources */,
@@ -1224,7 +1244,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Matthew Johnson (A77CNHKCYR)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Voteatlas1/Utility",
@@ -1235,7 +1255,7 @@
 				INFOPLIST_FILE = "Voteatlas1/Voteatlas1-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "fed3a850-e8ec-436a-8908-10034079f2a1";
+				PROVISIONING_PROFILE = "eae27aec-15b5-44ca-8fd0-3a4528afbc38";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1248,7 +1268,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Matthew Johnson (A77CNHKCYR)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Voteatlas1/Utility",
@@ -1259,7 +1279,7 @@
 				INFOPLIST_FILE = "Voteatlas1/Voteatlas1-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "fed3a850-e8ec-436a-8908-10034079f2a1";
+				PROVISIONING_PROFILE = "eae27aec-15b5-44ca-8fd0-3a4528afbc38";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

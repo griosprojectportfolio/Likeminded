@@ -28,11 +28,12 @@
 #import <AVFoundation/AVFoundation.h>
 #import "SearchCustomCell.h"
 #import "BrowserViewController.h"
+#import "LogInViewController.h"
 
 #define IMG_HGT 120
 #define CUSTOME_BTN_HGT 44
 
-@interface TableViewController () <CustomeTableViewDelegate, CalloutAnnotationViewDelegate, UITextFieldDelegate, keepMePostedDelegate,FlagDelegate, sideBarDelegate>{
+@interface TableViewController () <CustomeTableViewDelegate, CalloutAnnotationViewDelegate, UITextFieldDelegate, keepMePostedDelegate,FlagDelegate, sideBarDelegate,UserListDelegate>{
 
   UISearchBar *searchBarVote;
   UIActivityIndicatorView *activityIndicator;
@@ -103,7 +104,8 @@
 
     self.tbleVwBelief.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tbleVwBelief.separatorColor = [UIColor setCustomColorOfTextField];
-
+  if([self isauth_Token_Exist]){
+    
     NSArray *arrFetchedData = [User MR_findAll];
     userObject = [arrFetchedData objectAtIndex:0];
 
@@ -113,6 +115,9 @@
         [sharedAppDelegate.sideBar.arrMenuOption addObject:@"Admin"];
         [sharedAppDelegate.sideBar.tbleVwSideBar reloadData];
     }
+  }else{
+    //[self alertMassege];
+  }
     [self addTableViewOfSearch];
 
     if (self.schemaBeliefId != 0) {
@@ -130,7 +135,8 @@
 
     [super viewDidAppear:animated];
     ispageExist = YES;
-
+  
+  
     dictSearch = [[[NSUserDefaults standardUserDefaults]objectForKey:SEARCH_KEYS] valueForKey:@"search"];
     if (dictSearch.count != 0) {
         if ([[dictSearch valueForKey:@"category"]integerValue] != 0) {
@@ -152,6 +158,46 @@
     isSearch = NO;
 }
 
+-(BOOL)isauth_Token_Exist {
+  NSString *auth_Token = [[NSUserDefaults standardUserDefaults]valueForKey:@"auth_token"];
+  if(auth_Token){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+
+-(void) alertMassege {
+  UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:nil message:@"You must login or create an account before you use this functionality." delegate:self cancelButtonTitle:@"Browse"otherButtonTitles:@"Login/Cretae", nil];
+  [alertVw show];
+}
+
+-(void)alertMassegeBtn{
+  UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:nil message:@"You must login or create an account before you use this functionality." delegate:self cancelButtonTitle:@"Browse"otherButtonTitles:@"Login/Create", nil];
+  [alertVw show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+  if(buttonIndex == 1){
+    LogInViewController *vwController =  [self.storyboard instantiateViewControllerWithIdentifier:@"login"];
+
+    UINavigationController *vc = [[UINavigationController alloc]initWithRootViewController:vwController];
+    //[self.navigationController pushViewController:vc animated:true];
+    NSLog(@"%@*******",vc);
+    sharedAppDelegate.window.rootViewController = vc;
+  }
+  
+  if(buttonIndex == 0){
+    self.tbleVwAutoCorrection.hidden = YES;
+    [self getAllBelievesList];
+  }
+
+  
+}
+
+
+
 #pragma mark - Set default setting of UI
 /**************************************************************************************************
  Function to Set default setting
@@ -163,10 +209,21 @@
     UIBarButtonItem *barBtnAdd = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(tapRightBarBtn:)];
     barBtnAdd.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setRightBarButtonItem:barBtnAdd];
+  
+  UIButton *BtnFilter = [[UIButton alloc]initWithFrame:CGRectMake(0, 0,20,20)];
+  [BtnFilter setImage:[UIImage imageNamed:@"filter" ] forState:UIControlStateNormal];
+  [BtnFilter addTarget:self action:@selector(tapFilter:) forControlEvents:UIControlEventTouchUpInside];
+  
+  UIBarButtonItem *barBtnFilter = [[UIBarButtonItem alloc]initWithCustomView:BtnFilter];
+   barBtnFilter.tintColor = [UIColor setCustomColorOfTextField];
+  
+  UIButton *BtnSearch = [[UIButton alloc]initWithFrame:CGRectMake(0,0, 30,30)];
+  [BtnSearch setImage:[UIImage imageNamed:@"menu" ] forState:UIControlStateNormal];
+  [BtnSearch addTarget:self action:@selector(openSideBar:) forControlEvents:UIControlEventTouchUpInside];
 
-    UIBarButtonItem *barBtnSearch = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self action:@selector(openSideBar:)];
+  UIBarButtonItem *barBtnSearch = [[UIBarButtonItem alloc]initWithCustomView:BtnSearch];
     barBtnSearch.tintColor = [UIColor setCustomColorOfTextField];
-    [self.navigationItem setLeftBarButtonItem:barBtnSearch];
+    [self.navigationItem setLeftBarButtonItems:@[barBtnSearch,barBtnFilter]];
 }
 
 #pragma mark - Add Search bar
@@ -226,6 +283,7 @@
                     [self hideActivityIndicator];
                 } failure:^(AFHTTPRequestOperation *task, NSError *error) {
                     [self hideActivityIndicator];
+                   [self.tbleVwBelief reloadData];
                 }];
             });
         });
@@ -542,7 +600,7 @@
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-
+  [self.tbleVwAutoCorrection setHidden:YES];
   [searchBar resignFirstResponder];
   [searchBar setShowsCancelButton:NO animated:YES];
   searchBarVote.text = @"";
@@ -554,10 +612,13 @@
 
 #pragma mark - UIBar button action
 - (void)tapRightBarBtn:(id)sender {
-
+  if([self isauth_Token_Exist]){
   BelieveViewController *vcBelief = [self.storyboard instantiateViewControllerWithIdentifier:@"BelieveID"];
   vcBelief.userID = self.userID;
   [self.navigationController pushViewController:vcBelief animated:YES];
+  }else{
+    [self alertMassege];
+  }
 }
 
 - (void)tapLeftBarBtn:(id)sender {
@@ -597,7 +658,12 @@
       }
 
       cell.delegate = self;
+    if([self isauth_Token_Exist]){
       [cell setValueInTableVw:objBelief withVwController:self forRow:indexPath.row withCellWidth:self.tbleVwBelief.frame.size.width withLaguagleId:userObject.language];
+    }else{
+      NSNumber *langID = [[NSNumber alloc]initWithUnsignedInt:1];
+      [cell setValueInTableVw:objBelief withVwController:self forRow:indexPath.row withCellWidth:self.tbleVwBelief.frame.size.width withLaguagleId:langID];
+    }
       NSInteger lastRowIndex = [tableView numberOfRowsInSection:0] - 1;
 
       if (ispageExist == YES && lastRowIndex == indexPath.row) {
@@ -621,7 +687,7 @@
 #pragma mark - Table view data Delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
+  if([self isauth_Token_Exist]){
   if (tableView == self.tbleVwBelief) {
 
     Belief *objBelief;
@@ -635,6 +701,9 @@
   } else {
     searchBarVote.text = [self.arryAutoCorrection objectAtIndex:indexPath.row];
     self.tbleVwAutoCorrection.hidden = YES;
+  }
+  }else{
+    [self alertMassege];
   }
 }
 
@@ -674,7 +743,7 @@
  Function to profile button tapped
  **************************************************************************************************/
 - (void)profileBtnTapped:(Belief *)belief {
-
+  if([self isauth_Token_Exist]){
   if ([belief.profileImg isKindOfClass:[NSNull class]] || belief.profileImg == nil) {
 
     UIAlertView *alertVwAnonymousAuthor = [[UIAlertView alloc]initWithTitle:@"Anonymous Author" message:nil delegate:nil cancelButtonTitle:@"Ok"otherButtonTitles:nil];
@@ -685,11 +754,14 @@
     ProfileViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfilID"];
     vc.userName = belief.userName;
     [self.navigationController pushViewController:vc animated:YES];
+  }else{
+    [self alertMassege];
+  }
 }
 
 #pragma mark - Delegates of Custom button view
 - (void)sharebtnTapped:(Belief*)belief {
-
+  if([self isauth_Token_Exist]){
   [self showActivityIndicator];
   dispatch_queue_t queue = dispatch_queue_create("get image", NULL);
   dispatch_async(queue, ^ {
@@ -749,6 +821,10 @@
       };
     });
   });
+  }else{
+    [self alertMassege];
+  }
+  
 }
 
 
@@ -782,19 +858,19 @@
   self.vwMap.frame = self.view.frame;
 
   btnHideMap = [UIButton buttonWithType:UIButtonTypeCustom];
-  btnHideMap.frame = CGRectMake(self.view.frame.size.width - 40, 75, 40, 40);
-  [btnHideMap setTitle:@"x" forState:UIControlStateNormal];
+  btnHideMap.frame = CGRectMake(self.view.frame.size.width - 40,65, 40, 40);
+  [btnHideMap setTitle:@"X" forState:UIControlStateNormal];
   [btnHideMap setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
   [btnHideMap addTarget:self action:@selector(hideMapViewWithAnimation) forControlEvents:UIControlEventTouchUpInside];
   btnHideMap.titleLabel.textColor = [UIColor darkGrayColor];
   [self.vwMap addSubview:btnHideMap];
 }
 
-- (void)showMapViewWithAnimation:(int)tagOfCell {
+- (void)showMapViewWithAnimation:(Belief *)belief withCellTag:(int)tagOfCell {
 
   [UIView animateWithDuration:0.4 animations:^{
     [self.vwMap setHidden:NO];
-    [self showStaticDataOnMapVw];
+    [self showStaticDataOnMapVw:belief];
     mapVwBelief.frame = CGRectMake(10, 100, self.tbleVwBelief.frame.size.width - 20, self.tbleVwBelief.frame.size.height - 130);
     [mapVwBelief setHidden:NO];
   }completion:^(BOOL finished) {
@@ -851,7 +927,7 @@
 }
 
 - (void)mapbtnTapped:(Belief *)belief withCellTag:(NSInteger)tag {
-
+  if([self isauth_Token_Exist]){
   NSDictionary *param = @{@"belief":[NSNumber numberWithInteger:belief.beliefId]};
 
   if ([ConstantClass checkNetworkConection] == YES) {
@@ -902,13 +978,16 @@
             }
           }
           [self.mapVwBelief removeAnnotations:self.mapVwBelief.annotations];
-          [self showMapViewWithAnimation:(int)tag];
+          [self showMapViewWithAnimation:belief withCellTag:(int)tag];
         } failure:^(AFHTTPRequestOperation *task, NSError *error) {
         }];
       });
     });
   } else {
     [self hideActivityIndicator];
+  }
+  }else{
+    [self alertMassege];
   }
 }
 
@@ -980,9 +1059,9 @@
   }
 }
 
-- (void)showStaticDataOnMapVw {
+- (void)showStaticDataOnMapVw:(Belief *)belief {
 
-  UIView *vwMapStatic = [[UIView alloc]initWithFrame:CGRectMake(10.0f, self.vwMap.frame.size.height - 115, 120, 85)];
+  UIView *vwMapStatic = [[UIView alloc]initWithFrame:CGRectMake(10.0f, self.vwMap.frame.size.height - 115, 170, 85)];
   vwMapStatic.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.9];
   vwMapStatic.layer.borderColor = [UIColor setCustomColorOfTextField].CGColor;
   vwMapStatic.layer.borderWidth = 1.0f;
@@ -1031,8 +1110,65 @@
   lblOppose.text = strOppose;
   lblSuppose.text = strSuppose;
   lblTotal.text = [NSString stringWithFormat:@"%li",(long)totalComment];
+    
+  UIButton *btnLike = [[UIButton alloc] initWithFrame:CGRectMake( vwMapStatic.frame.size.width - 60, 10, 50 , 20)];
+  btnLike.backgroundColor = [UIColor setCustomLikeButtonColor];
+  btnLike.layer.cornerRadius = 5.0;
+  btnLike.tag = belief.beliefId;
+  btnLike.titleLabel.font = [UIFont systemFontOfSize:14.0];
+  [btnLike setTitle:@"View" forState:UIControlStateNormal];
+  [btnLike addTarget:self action:@selector(showSupposeUserListWithAnimation:) forControlEvents:UIControlEventTouchUpInside];
+  [vwMapStatic addSubview:btnLike];
+    
+  UIButton *btnDisLike = [[UIButton alloc] initWithFrame:CGRectMake( vwMapStatic.frame.size.width - 60, 35, 50 , 20)];
+  btnDisLike.backgroundColor = [UIColor setCustomDisLikeButtonColor];
+  btnDisLike.layer.cornerRadius = 5.0;
+  btnDisLike.tag = belief.beliefId;
+  btnDisLike.titleLabel.font = [UIFont systemFontOfSize:14.0];
+  [btnDisLike setTitle:@"View" forState:UIControlStateNormal];
+  [btnDisLike addTarget:self action:@selector(showOpposeUserListWithAnimation:) forControlEvents:UIControlEventTouchUpInside];
+  [vwMapStatic addSubview:btnDisLike];
+    
 }
 
+#pragma mark - Like-Dislike Users List and there Delegate methods
+- (void)addUserListView:(NSInteger)belief_id isOppose:(BOOL)objIsOppose {
+    self.vwUserList = [[UsersListView alloc] initWithFrame:CGRectMake(self.view.center.x, self.view.center.y, 0, 0)];
+    self.vwUserList.delegate = self;
+    objIsOppose ? [self.vwUserList loadOpposeUserListData:belief_id] : [self.vwUserList loadSupposeUserListData:belief_id];
+    [self.view addSubview:self.vwUserList];
+}
+
+- (void)showOpposeUserListWithAnimation:(UIButton *)sender {
+    
+    [self addUserListView:sender.tag isOppose:TRUE];
+    [UIView animateWithDuration:0.4 animations:^{
+        self.vwUserList.frame = CGRectMake(10, 75, self.tbleVwBelief.frame.size.width - 20, self.tbleVwBelief.frame.size.height - 100);
+        self.vwUserList.btnHideList.frame = CGRectMake(self.view.frame.size.width - 60,0, 40, 40);
+        self.vwUserList.tblUserList.frame = CGRectMake(0, 50, self.tbleVwBelief.frame.size.width - 20, self.tbleVwBelief.frame.size.height - 150);
+        self.vwUserList.activityIndicator.center = CGPointMake(self.vwUserList.frame.size.width/2, (self.vwUserList.frame.size.height - 64)/2);
+    }completion:^(BOOL finished) {
+    }];
+}
+
+- (void)showSupposeUserListWithAnimation:(UIButton *)sender {
+    
+    [self addUserListView:sender.tag isOppose:FALSE];
+    [UIView animateWithDuration:0.4 animations:^{
+        self.vwUserList.frame = CGRectMake(10, 75, self.tbleVwBelief.frame.size.width - 20, self.tbleVwBelief.frame.size.height - 100);
+        self.vwUserList.btnHideList.frame = CGRectMake(self.view.frame.size.width - 60,0, 40, 40);
+        self.vwUserList.tblUserList.frame = CGRectMake(0, 50, self.tbleVwBelief.frame.size.width - 20, self.tbleVwBelief.frame.size.height - 150);
+        self.vwUserList.activityIndicator.center = CGPointMake(self.vwUserList.frame.size.width/2, (self.vwUserList.frame.size.height - 64)/2);
+    }completion:^(BOOL finished) {
+    }];
+}
+
+- (void)showTappedUserProfile:(NSString *)userName {
+
+    ProfileViewController *vwControllerProfile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfilID"];
+    vwControllerProfile.userName = userName;
+    [self.navigationController pushViewController:vwControllerProfile animated:YES];
+}
 
 #pragma mark - Mail compose delegate
 - (void)mailComposeController:(MFMailComposeViewController *)controller
@@ -1115,7 +1251,7 @@
 
   //Translation btn tapped
 - (void)translatebtnTapped:(Belief*)belief {
-
+  if([self isauth_Token_Exist]){
     [self showTranslationVwWithAnimation:belief];
     NSString *strSuppose = belief.statement;
     CGRect rect =[strSuppose boundingRectWithSize:CGSizeMake(scrollVw.frame.size.width-30, 200) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin)attributes:@{ NSFontAttributeName : [UIFont systemFontOfSize:14.0]} context:nil];
@@ -1130,6 +1266,10 @@
     [self callTranslateApi:belief];
     [self.view bringSubviewToFront:activityIndicator];
     [self showActivityIndicator];
+  }else{
+    [self alertMassege];
+  }
+  
 }
 
 - (void)showTranslationVwWithAnimation:(Belief*)belief {
@@ -1434,10 +1574,13 @@
  Function to add and show keep me posted
  **************************************************************************************************/
 - (void)keepmePostedBtnTapped:(Belief *)belief withTag:(NSInteger)tag {
-
+  if([self isauth_Token_Exist]){
   self.objBeliefForTranslation = belief;
   [self showKeepMePostVwWithAnimation];
   tbleVwcell = (TableViewCell*)[self.tbleVwBelief cellForRowAtIndexPath:[NSIndexPath indexPathForRow:tag inSection:0]];
+  }else{
+    [self alertMassege];
+  }
 }
 
 - (void)addKeepMePostView {
@@ -1497,12 +1640,13 @@
 }
 
 - (void)linkBtnTapped:(Belief *)belief {
-
+  
   BrowserViewController *vwController = [self.storyboard instantiateViewControllerWithIdentifier:@"BrowserVC"];
   vwController.strBrowseUrl = belief.weblink;
   UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:vwController];
   [self presentViewController:navController animated:YES completion:nil];
-}
+  
+  }
 
 #pragma mark - Flag btn tapped
 /**************************************************************************************************
@@ -1559,21 +1703,28 @@
 }
 
 - (void)supportOpposeBtnTapped {
-
+  if([self isauth_Token_Exist]){
   if (isSearch == NO){
     [self getAllBelievesList];
   }
+  }else{
+    [self alertMassege];
+  }
+  
 }
 
 - (void)fileItBtnTapped:(NSInteger)cellTag {
-
+  if([self isauth_Token_Exist]){
   [self.arryBeliefs removeObjectAtIndex:cellTag];
   [self.tbleVwBelief reloadData];
-}
+  }else{
+    [self alertMassege];
+  }
+  }
 
 #pragma amrk - Play btn tapped
 - (void)videoBtnTapped:(Belief *)belief {
-
+  
   if (belief.hasYouTubeUrl == YES) {
     [self submitYouTubeURL:belief];
   } else  if (belief.hasVideo == YES){
@@ -1584,6 +1735,7 @@
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:vcShowImgOrVideo];
     [self presentViewController:navController animated:YES completion:nil];
   }
+  
 }
 
 #pragma mark - Play button tapped
@@ -1643,7 +1795,7 @@
           [self presentViewController:self.mpvc animated:YES completion:^{
               self.mpvc.moviePlayer.allowsAirPlay = YES;
               [[self.mpvc moviePlayer] setControlStyle:2];
-              self.mpvc.moviePlayer.movieSourceType = MPMovieSourceTypeStreaming;
+              //self.mpvc.moviePlayer.movieSourceType = MPMovieSourceTypeStreaming;
               self.mpvc.moviePlayer.shouldAutoplay = YES;
           }];
       }];
@@ -1668,8 +1820,12 @@
 }
 
 - (void)navigateToCommentBtnTapped:(Belief *)belief {
+  if([self isauth_Token_Exist]){
     [self supportCommentBtnTapped:belief];
-}
+  }else{
+    [self alertMassege];
+  }
+  }
 
 #pragma mark - Support button tapped
 - (void)supportCommentBtnTapped:(Belief *)belief  {
@@ -1702,7 +1858,7 @@
 #pragma mark - Open Slider
 
 - (IBAction)openSideBar:(id)sender {
-
+  if([self isauth_Token_Exist]){
     sharedAppDelegate.navController = self.navigationController;
     sharedAppDelegate.sideBar.tbleVwSideBar.reloadData;
     sharedAppDelegate.sideBar.delegate = self;
@@ -1714,7 +1870,43 @@
         }];
         [sharedAppDelegate.window bringSubviewToFront:sharedAppDelegate.sideBar];
     }
+  }else{
+    [self alertMassege];
+  }
 }
+
+
+#pragma mark - Open Slider
+
+- (IBAction)tapFilter:(id)sender {
+  if([self isauth_Token_Exist]){
+    SearchDetailViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"SearchVC"];
+    [self.navigationController pushViewController:vc animated:true];
+
+  }else{
+    [self alertMassege];
+  }
+}
+
+
+#pragma mark - Close Slider
+
+- (void)closeSideBar {
+    sharedAppDelegate.navController = self.navigationController;
+    sharedAppDelegate.sideBar.tbleVwSideBar.reloadData;
+    sharedAppDelegate.sideBar.delegate = self;
+    if (sharedAppDelegate.isSliderOPen == NO) {
+      
+      sharedAppDelegate.isSliderOPen = NO;
+      [UIView animateWithDuration:0.3 animations:^(void) {
+        [sharedAppDelegate.sideBar setFrame:CGRectMake(-self.view.frame.size.width, 0, self.view.frame.size.width, self.view.frame.size.height)];
+      }];
+      [sharedAppDelegate.window bringSubviewToFront:sharedAppDelegate.sideBar];
+    }
+}
+
+
+
 
 - (void)popViewController:(UIViewController*)vwController{
     [self.navigationController popViewControllerAnimated:YES];
@@ -1729,15 +1921,24 @@
             [[NSUserDefaults standardUserDefaults]removeObjectForKey:SEARCH_KEYS];
             [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"userlanguage"];
             [[NSUserDefaults standardUserDefaults] synchronize];
-
+            [self closeSideBar];
+            [self logoutAlertMsg];
+            //[self.tbleVwBelief reloadData];
         } failure:^(AFHTTPRequestOperation *task, NSError *error) {
         }];
-        [self.navigationController popToRootViewControllerAnimated:NO];
+       // [self.navigationController popToRootViewControllerAnimated:NO];
+      
         [User MR_truncateAll];
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+      
     } else {
       [self hideActivityIndicator];
     }
+}
+
+-(void)logoutAlertMsg{
+  UIAlertView *alertVw = [[UIAlertView alloc]initWithTitle:nil message:@"Successfully logout." delegate:self cancelButtonTitle:@"OK"otherButtonTitles:nil];
+  [alertVw show];
 }
 
 #pragma mark - Go to admin part

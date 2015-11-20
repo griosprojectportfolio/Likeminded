@@ -37,6 +37,7 @@
 @property(nonatomic,strong)IBOutlet UIButton *btnSignUp;
 @property(nonatomic,strong)IBOutlet UIButton *btnUpdate;
 @property(nonatomic,strong)IBOutlet UIButton *btnPreferedLanguage;
+@property(nonatomic,strong)IBOutlet UIButton *btnGender;
 
 @property(nonatomic,strong)IBOutlet CustomTextField *txtUserID;
 @property(nonatomic,strong)IBOutlet CustomTextField *txtname;
@@ -48,6 +49,7 @@
 @property(nonatomic,strong)IBOutlet CustomTextField *txtPostalCode;
 @property(nonatomic,strong)IBOutlet CustomTextField *txtDOB;
 @property(nonatomic,strong)IBOutlet CustomTextField *txtPLanguage;
+@property(nonatomic,strong)IBOutlet CustomTextField *txtGender;
 @property(nonatomic,strong)IBOutlet CustomTextField *txtNewPassword;
 @property(nonatomic,strong)IBOutlet CustomTextField *txtConfirmationPassword;
 
@@ -57,8 +59,6 @@
 @property(nonatomic, strong) NSDictionary *dictUserDetail;
 
 @property(nonatomic, strong) NSMutableDictionary *dictSocialUserDetail;
-
-@property(nonatomic,strong)IBOutlet UISegmentedControl *segmentGender;
 
 - (IBAction)btnSignUpTapped:(id)sender;
 

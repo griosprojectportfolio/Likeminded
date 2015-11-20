@@ -13,4 +13,10 @@
 + (UIColor*)setCustomColorOfTextField;
 + (UIColor *)setCustomRedColor;
 + (UIColor *)setCustomSignUpColor;
+
++ (UIColor *)setCustomDarkBlueColor;
++ (UIColor *)setCustomLightBlueColor;
++ (UIColor *)setCustomLikeButtonColor;
++ (UIColor *)setCustomDisLikeButtonColor;
+
 @end

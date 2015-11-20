@@ -26,6 +26,7 @@
 @property (nonatomic, strong)NSMutableArray *arryCountry;
 @property (nonatomic, strong)NSMutableArray *arryCity;
 @property (nonatomic, strong)NSMutableArray *arryState;
+@property (nonatomic, strong)NSMutableArray *arryYears;
 
 @end
 
@@ -49,7 +50,7 @@
     [self addUserDetailOfUser];
     self.btnState.hidden = YES;
     self.btnCity.hidden = YES;
-    self.gender = @"Male";
+    self.gender = @"";
 
     [self defaulUISettings];
 
@@ -96,11 +97,15 @@
 
     [self.txtDOB setCustomImgVw:@"calander" withWidth:txtFieldWidth];
     self.txtDOB.textColor = [UIColor setCustomColorOfTextField];
+  
     self.txtDOB.frame = CGRectMake(self.txtDOB.frame.origin.x, self.txtDOB.frame.origin.y, (self.view.frame.size.width/2)- 25, 40);
-    self.txtDOB.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"DOB" attributes:@{NSForegroundColorAttributeName:[UIColor setCustomColorOfTextField]}];
+    self.txtDOB.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Birth Year(Opt)" attributes:@{NSForegroundColorAttributeName:[UIColor setCustomColorOfTextField],NSFontAttributeName:[UIFont systemFontOfSize:10]}];
 
-    self.segmentGender.frame = CGRectMake((self.view.frame.size.width/2) + 5,  self.txtDOB.frame.origin.y, self.txtDOB.frame.size.width, 40);
-     self.segmentGender.tintColor = [UIColor whiteColor];
+    [self.txtGender setCustomImgVw:@"" withWidth:135];
+    self.txtGender.textColor = [UIColor setCustomColorOfTextField];
+    self.txtGender.frame = CGRectMake((self.view.frame.size.width/2) + 5,  self.txtDOB.frame.origin.y, self.txtDOB.frame.size.width, 40);
+    self.txtGender.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Gender(Opt)" attributes:@{NSForegroundColorAttributeName:[UIColor setCustomColorOfTextField]}];
+    self.btnGender.frame = self.txtGender.frame;
 
     [self.txtCountry setCustomImgVw:@"location" withWidth:txtFieldWidth];
     self.txtCountry.textColor = [UIColor setCustomColorOfTextField];
@@ -143,6 +148,16 @@
     if (IS_IPHONE_4_OR_LESS| IS_IPHONE_5) {
         [self.vScrollView setContentSize:CGSizeMake(self.vScrollView.frame.size.width, 650)];
     }
+
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy"];
+    int i2 = [[formatter stringFromDate:[NSDate date]] intValue];
+
+        //Create Years Array from 1960 to This year
+    self.arryYears = [[NSMutableArray alloc] init];
+    for (int i=1960; i<=i2; i++) {
+        [self.arryYears addObject:[NSString stringWithFormat:@"%d",i]];
+    }
 }
 
 #pragma mark - Add social type
@@ -169,17 +184,14 @@
 
     [self.view endEditing:YES];
     self.vScrollView.contentOffset = CGPointMake(0, 50);
-    [ActionSheetPicker displayActionPickerWithView:self.view datePickerMode:UIDatePickerModeDate selectedDate:[NSDate date] target:self action:@selector(setDateToField::) title:@"Select Date"];
+  [ActionSheetPicker displayActionPickerWithView:self.view data:self.arryYears selectedIndex:0 target:self action:@selector(setDateToField::) title:@"Year" width:320];
 }
 
-- (void)setDateToField:(NSDate *)selectedDate :(id)element {
+- (void)setDateToField:(NSString *)selectedDate :(id)element {
 
     self.vScrollView.contentOffset = CGPointMake(0, -64);
     //convert date into string
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy-MM-dd"];
-    NSString *strGivenDate = [formatter stringFromDate:selectedDate];
-
+    NSString *strGivenDate =  [self.arryYears objectAtIndex:selectedDate.intValue];
     self.txtDOB.text = strGivenDate;
 }
 
@@ -227,6 +239,28 @@
     } failure:^(AFHTTPRequestOperation *task, NSError *error) {
     }];
 }
+
+#pragma mark - City btn is tapped
+- (IBAction)genderBtnTapped:(id)sender {
+
+    [self.view endEditing:YES];
+    NSArray *arryGender = @[@"Male", @"Female", @"None"];
+    [ActionSheetPicker displayActionPickerWithView:self.view data:arryGender selectedIndex:0 target:self action:@selector(setGenderToField::) title:@"Gender" width:320];
+}
+
+- (void)setGenderToField:(NSString *)selectedGender :(id)element {
+
+    NSArray *arryGender = @[@"Male", @"Female", @"None"];
+    self.vScrollView.contentOffset = CGPointMake(0,-64);
+    self.txtGender.text = [arryGender objectAtIndex:selectedGender.intValue];
+    self.gender = self.txtGender.text;
+    if (selectedGender.intValue == 2) {
+        self.gender = @"";
+        self.txtGender.text = @"";
+        self.txtGender.placeholder = @"Gender(Opt)";
+    }
+}
+
 
 #pragma mark - City btn is tapped
 - (IBAction)cityBtnTapped:(id)sender {
@@ -311,12 +345,6 @@
         UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter postal Code." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [msgAlert show];
         return;
-    }
-
-    if (self.txtDOB.text.length == 0) {
-//        UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter dob." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-//        [msgAlert show];
-//        return;
     }
 
     if (self.txtNewPassword.text.length < 7) {
@@ -493,9 +521,11 @@
     self.txtPostalCode.text = userObject.postalCode;
     NSString *strGender = userObject.gender;
     if ([strGender isEqualToString:@"Female"]) {
-        [self.segmentGender setSelectedSegmentIndex:1];
-    }else{
-        [self.segmentGender setSelectedSegmentIndex:0];
+        self.txtGender.text = @"Female";
+    } else if ([strGender isEqualToString:@"Male"]) {
+       self.txtGender.text = @"Male";
+    } else {
+
     }
 }
 

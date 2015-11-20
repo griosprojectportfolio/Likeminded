@@ -11,6 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import "HCYoutubeParser.h"
+#import "UsersListView.h"
 
 @interface TableViewController : UIViewController <UISearchBarDelegate,UIActionSheetDelegate,MFMailComposeViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate,UIAlertViewDelegate> {
 
@@ -30,5 +31,7 @@
 - (void)profileBtnTapped:(id)sender;
 -(BOOL)isauth_Token_Exist;
 -(void) alertMassege;
+
+@property (nonatomic, strong) UsersListView *vwUserList;
 
 @end

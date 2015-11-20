@@ -494,6 +494,7 @@ CGRect const kInitialViewFrame = { 0.0f, 0.0f, 320.0f, 480.0f};
 
 
 - (void)profileBtnTapped:(Comment*)comment {
+    
     ProfileViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfilID"];
     vc.userName = comment.userName;
     [self.navigationController pushViewController:vc animated:YES];

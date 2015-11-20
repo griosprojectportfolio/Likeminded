@@ -11,6 +11,7 @@
 #import "SignUpViewController.h"
 #import "DraftViewController.h"
 #import "ProfileViewController.h"
+#import "FaqsViewController.h"
 
 @implementation SideBarView 
 
@@ -98,7 +99,8 @@
         [self.arrMenuOption addObject: @"My Account"];
         [self.arrMenuOption addObject: @"My Profile"];
         [self.arrMenuOption addObject: @"Logout"];
-            //  [self.arrMenuOption addObject: @"Admin"];
+        [self.arrMenuOption addObject: @"FAQ's"];
+        //[self.arrMenuOption addObject: @"Admin"];
     }
 }
 
@@ -133,6 +135,10 @@
             break;
 
         case 5:
+            [self faqsBtnTapped:nil];
+            break;
+            
+        case 6:
             [self adminBtnTapped:nil];
             break;
 
@@ -225,6 +231,26 @@
     vwControllerProfile.userName = @"LoginUser";
     [sharedAppDelegate.navController pushViewController:vwControllerProfile animated:YES];
 }
+
+- (void)faqsBtnTapped:(id)sender {
+    
+    UIViewController *vwController = [sharedAppDelegate.arryNavController objectAtIndex:sharedAppDelegate.arryNavController.count - 1];
+    if ([vwController isKindOfClass:[FaqsViewController class]])  {
+        return;
+    }
+    
+    for (UIViewController *vwController in sharedAppDelegate.arryNavController) {
+        
+        if ([vwController isKindOfClass:[FaqsViewController class]]) {
+            [sharedAppDelegate.navController popViewControllerAnimated:YES];
+            return;
+        }
+    }
+    
+    FaqsViewController *vwControllerProfile = [self.storyboard instantiateViewControllerWithIdentifier:@"FaqsID"];
+    [sharedAppDelegate.navController pushViewController:vwControllerProfile animated:YES];
+}
+
 
 - (void)logoutBtnTapped:(id)sender {
 
