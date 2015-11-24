@@ -69,6 +69,7 @@
 
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.translucent = YES;
+    [self getAllFilterDataFromServer];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -128,6 +129,8 @@
 #pragma mark - Apply btn tapped
 - (void)applytBtnTapped {
 
+    [self setFilterDataOnServer];
+    
     if (txtFldJustAdded.text.length != 0 && ![txtFldJustAdded.text isEqualToString:@"None"]) {
         [self.dictLocation setValue:txtFldJustAdded.text forKey:@"trending"];
     }
@@ -157,8 +160,9 @@
 
 #pragma mark - Just add btn tapped
 - (IBAction)justAddedBtnTapped:(id)sender {
-
-    [ActionSheetPicker displayActionPickerWithView:self.view data:arryJustAdded selectedIndex:0 target:self action:@selector(setAddedToField::) title:@"" width:320];
+    
+    NSInteger index = [arryJustAdded indexOfObject:txtFldJustAdded.text] ? [arryJustAdded indexOfObject:txtFldJustAdded.text] : 0 ;
+    [ActionSheetPicker displayActionPickerWithView:self.view data:arryJustAdded selectedIndex:index target:self action:@selector(setAddedToField::) title:@"" width:320];
 }
 
 - (void)setAddedToField:(NSString *)selectedMonth :(id)element {
@@ -168,9 +172,10 @@
 
 #pragma mark - Global button tapped
 - (IBAction)GlobalBtnTapped:(id)sender {
-
-  self.dictLocation = [[NSMutableDictionary alloc]init];
-  [ActionSheetPicker displayActionPickerWithView:self.view data:arryGlobal selectedIndex:0 target:self action:@selector(setGlobalToField::) title:@"" width:320];
+    
+    NSInteger index = [arryGlobal indexOfObject:txtFldGlobal.text] ? [arryGlobal indexOfObject:txtFldGlobal.text] : 0 ;
+    self.dictLocation = [[NSMutableDictionary alloc]init];
+    [ActionSheetPicker displayActionPickerWithView:self.view data:arryGlobal selectedIndex:index target:self action:@selector(setGlobalToField::) title:@"" width:320];
 }
 
 - (void)setGlobalToField:(NSString *)selectedMonth :(id)element {
@@ -225,8 +230,9 @@
 
 #pragma mark - All button tapped
 - (IBAction)allBtnTapped:(id)sender {
-
-    [ActionSheetPicker displayActionPickerWithView:self.view data:self.arrayCategoryName selectedIndex:0 target:self action:@selector(setAllToField::) title:@"" width:320];
+    
+    NSInteger index = [self.arrayCategoryName indexOfObject:txtFldAll.text] ? [self.arrayCategoryName indexOfObject:txtFldAll.text] : 0 ;
+    [ActionSheetPicker displayActionPickerWithView:self.view data:self.arrayCategoryName selectedIndex:index target:self action:@selector(setAllToField::) title:@"" width:320];
 }
 
 - (void)setAllToField:(NSString *)selectedMonth :(id)element {
@@ -332,6 +338,63 @@
     isFileIt = NO;
     isTrash = NO;
   }
+}
+
+#pragma mark - Get and Set all Filters
+
+- (void)getAllFilterDataFromServer {
+    
+    [self startAnimation];
+    dispatch_async(dispatch_queue_create("getFilter", NULL), ^{
+        dispatch_async (dispatch_get_main_queue(), ^{
+            [self.api callGETUrlWithHeaderAuthentication:nil method:@"/api/v1/get_user_filters" success:^(AFHTTPRequestOperation *task, id responseObject) {
+                [self assignDataToRespectiveControl:[responseObject valueForKey:@"data"]];
+                [self stopAnimation];
+            } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+                NSLog(@"%@",error);
+                [self stopAnimation];
+            }];
+        });
+    });
+}
+
+- (void)setFilterDataOnServer {
+    
+    NSDictionary *param = @{@"tab":txtFldJustAdded.text, @"scope":txtFldGlobal.text, @"category":txtFldAll.text, @"filed":[NSNumber numberWithBool:isFileIt], @"trashed" : [NSNumber numberWithBool:isTrash]};
+    
+    dispatch_async(dispatch_queue_create("setFilter", NULL), ^{
+        dispatch_async (dispatch_get_main_queue(), ^{
+            [self.api callPostUrlWithHeader:param method:@"/api/v1/set_user_filters" success:^(AFHTTPRequestOperation *task, id responseObject) {
+                NSLog(@"%@",responseObject);
+            } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+                NSLog(@"%@",error);
+            }];
+        });
+    });
+}
+
+- (void)assignDataToRespectiveControl:(NSDictionary *)dictParams {
+    
+    if ([dictParams valueForKey:@"tab"] != nil || ![[dictParams valueForKey:@"tab"] isEmpty] ) {
+        txtFldJustAdded.text = [dictParams valueForKey:@"tab"];
+    }
+    
+    if ([dictParams valueForKey:@"scope"] != nil || ![[dictParams valueForKey:@"scope"] isEmpty] ) {
+        txtFldGlobal.text = [dictParams valueForKey:@"scope"];
+    }
+    
+    if ([dictParams valueForKey:@"category"] != nil || ![[dictParams valueForKey:@"category"] isEmpty] ) {
+        txtFldAll.text = [dictParams valueForKey:@"category"];
+    }
+    
+    if ([[dictParams valueForKey:@"filed"] boolValue]) {
+        segmentTrash.selectedSegmentIndex = 1;
+    }else if ([[dictParams valueForKey:@"trashed"] boolValue]) {
+        segmentTrash.selectedSegmentIndex = 2;
+    }else {
+        segmentTrash.selectedSegmentIndex = 0;
+    }
+    
 }
 
 @end

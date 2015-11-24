@@ -108,6 +108,10 @@
     btnBack.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setLeftBarButtonItem:btnBack];
 
+    UIBarButtonItem *btnFavo = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"menuHeartWhite"] style:UIBarButtonItemStylePlain target:self action:@selector(favoBtnTapped:)];
+    btnFavo.tintColor = [UIColor setCustomColorOfTextField];
+    [self.navigationItem setRightBarButtonItem:btnFavo];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
@@ -119,6 +123,16 @@
 - (void)backBtnTapped {
 
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)favoBtnTapped:(UIButton *)sender {
+    if (sender.tag) {
+        sender.tintColor = [UIColor setCustomColorOfTextField];
+        sender.tag = sender.tag - 1;
+    }else {
+        sender.tintColor = [UIColor setCustomDisLikeButtonColor];
+        sender.tag = sender.tag + 1;
+    }
 }
 
 /**************************************************************************************************
@@ -664,6 +678,28 @@
     [vwOverlay setHidden:YES];
     [activityIndicator setHidden:YES];
     [activityIndicator stopAnimating];
+}
+
+#pragma mark - Favourite button tapped
+/**************************************************************************************************
+ Function to check Favourite and set favourite and unfavourite
+ **************************************************************************************************/
+
+- (void)isProfileFavourite {
+    
+    NSDictionary *param = @{};
+    
+    [self startAnimation];
+    dispatch_async(dispatch_queue_create("favourite", NULL), ^{
+        dispatch_async (dispatch_get_main_queue(), ^{
+            [self.api callPostUrlWithHeader:param method:@"/api/v1/isFavourite" success:^(AFHTTPRequestOperation *task, id responseObject) {
+                [self stopAnimation];
+            } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+                NSLog(@"%@",error);
+                [self stopAnimation];
+            }];
+        });
+    });
 }
 
 @end
