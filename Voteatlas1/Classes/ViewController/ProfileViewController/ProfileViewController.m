@@ -52,11 +52,14 @@
     btnMyAccount.tag = 5;
     btnEdit.hidden = YES;
 
+    [self defaulUISettings];
+    
     NSArray *arrFetchedData = [User MR_findAll];
     User *userObject = [arrFetchedData objectAtIndex:0];
     btnProfile.hidden = YES;
     if ([self.userName isEqualToString:@"LoginUser"]) {
       self.userName = userObject.slug;
+      self.navigationItem.rightBarButtonItem = nil;
     }
 
     if ([self.userName isEqualToString:userObject.slug]) {
@@ -82,7 +85,6 @@
     [self addActivityIndicator];
     [self startAnimation];
 
-    [self defaulUISettings];
     self.comment = @"suppose";
     self.tableVwSupposeOppose.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     [self setFrameOfImgVwOfContent];
@@ -108,7 +110,8 @@
     btnBack.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setLeftBarButtonItem:btnBack];
 
-    UIBarButtonItem *btnFavo = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"menuHeartWhite"] style:UIBarButtonItemStylePlain target:self action:@selector(favoBtnTapped:)];
+    btnFavo = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"menuHeartWhite"] style:UIBarButtonItemStylePlain target:self action:@selector(favoBtnTapped:)];
+    btnFavo.tag = 0;
     btnFavo.tintColor = [UIColor setCustomColorOfTextField];
     [self.navigationItem setRightBarButtonItem:btnFavo];
 
@@ -127,11 +130,9 @@
 
 - (void)favoBtnTapped:(UIButton *)sender {
     if (sender.tag) {
-        sender.tintColor = [UIColor setCustomColorOfTextField];
-        sender.tag = sender.tag - 1;
+        [self setProfileAsUnFavourite];
     }else {
-        sender.tintColor = [UIColor setCustomDisLikeButtonColor];
-        sender.tag = sender.tag + 1;
+        [self setProfileAsFavourite];
     }
 }
 
@@ -188,7 +189,10 @@
  Function to set data in to corresponding fields
  **************************************************************************************************/
 - (void)setDataContents  {
-
+    
+    userSlug = [[self.dictProfile objectForKey:@"user"]valueForKey:@"slug"];
+    [self checkCurrentProfileFavOrNot];
+    
     lblUserName.text = [[self.dictProfile objectForKey:@"user"]valueForKey:@"name"];
     lblStatus.text = (![[self.dictProfile objectForKey:@"status"]isKindOfClass:[NSNull class]]?[self.dictProfile valueForKey:@"status"] :@"Not Available");
     self.txtVwAboutme.text = (![[self.dictProfile valueForKey:@"about"]isKindOfClass:[NSNull class]]?[self.dictProfile valueForKey:@"about"] :@"");
@@ -685,15 +689,45 @@
  Function to check Favourite and set favourite and unfavourite
  **************************************************************************************************/
 
-- (void)isProfileFavourite {
+- (void)checkCurrentProfileFavOrNot {
     
-    NSDictionary *param = @{};
+    NSDictionary *param = @{@"slug":userSlug};
     
-    [self startAnimation];
     dispatch_async(dispatch_queue_create("favourite", NULL), ^{
         dispatch_async (dispatch_get_main_queue(), ^{
-            [self.api callPostUrlWithHeader:param method:@"/api/v1/isFavourite" success:^(AFHTTPRequestOperation *task, id responseObject) {
+            [self.api callGETUrlWithHeaderAuthentication:param method:@"/api/v1/favourite_status" success:^(AFHTTPRequestOperation *task, id responseObject) {
+                NSLog(@"%@",responseObject);
+                BOOL isFavourite = [[[responseObject valueForKey:@"data"] valueForKey:@"status"] boolValue];
+                if(isFavourite) {
+                    btnFavo.tintColor = [UIColor setCustomDisLikeButtonColor];
+                    btnFavo.tag = 1;
+                }else {
+                    btnFavo.tintColor = [UIColor setCustomColorOfTextField];
+                    btnFavo.tag = 0;
+                }
+            } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+                NSLog(@"%@",error);
+            }];
+        });
+    });
+}
+
+- (void)setProfileAsFavourite {
+    
+    [self startAnimation];
+    
+    NSDictionary *param = @{@"slug":userSlug};
+    
+    dispatch_async(dispatch_queue_create("favourite", NULL), ^{
+        dispatch_async (dispatch_get_main_queue(), ^{
+            [self.api callPostUrlWithHeader:param method:@"/api/v1/mark_favourite" success:^(AFHTTPRequestOperation *task, id responseObject) {
+                NSLog(@"%@",responseObject);
                 [self stopAnimation];
+                BOOL isSuccess = [[responseObject valueForKey:@"success"] boolValue];
+                if (isSuccess) {
+                    btnFavo.tintColor = [UIColor setCustomDisLikeButtonColor];
+                    btnFavo.tag = 1;
+                }
             } failure:^(AFHTTPRequestOperation *task, NSError *error) {
                 NSLog(@"%@",error);
                 [self stopAnimation];
@@ -701,5 +735,30 @@
         });
     });
 }
+
+- (void)setProfileAsUnFavourite {
+    
+    [self startAnimation];
+    
+    NSDictionary *param = @{@"slug":userSlug};
+    
+    dispatch_async(dispatch_queue_create("favourite", NULL), ^{
+        dispatch_async (dispatch_get_main_queue(), ^{
+            [self.api callPostUrlWithHeader:param method:@"/api/v1/mark_unfavourite" success:^(AFHTTPRequestOperation *task, id responseObject) {
+                NSLog(@"%@",responseObject);
+                [self stopAnimation];
+                BOOL isSuccess = [[responseObject valueForKey:@"success"] boolValue];
+                if (isSuccess) {
+                    btnFavo.tintColor = [UIColor setCustomColorOfTextField];
+                    btnFavo.tag = 0;
+                }
+            } failure:^(AFHTTPRequestOperation *task, NSError *error) {
+                NSLog(@"%@",error);
+                [self stopAnimation];
+            }];
+        });
+    });
+}
+
 
 @end

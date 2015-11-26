@@ -77,9 +77,9 @@
     vwHeader.backgroundColor = [UIColor whiteColor];
     [vwHeader addSubview:lblText];
     if (section == 0) {
-        lblText.text = @"Public Belief";
+        lblText.text = @"Public support or agree";
     }else {
-        lblText.text = @"Non Public Belief";
+        lblText.text = @"Non Public support or agree";
     }
     return vwHeader;
 }

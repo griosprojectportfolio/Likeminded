@@ -41,6 +41,9 @@
     IBOutlet UIButton *btnAdmin;
     IBOutlet UISegmentedControl *segmentSupposeOppose;
     IBOutlet UIToolbar *toolBarDone;
+    
+    UIBarButtonItem *btnFavo;
+    NSString *userSlug;
 }
 
 @property(nonatomic,strong)NSMutableDictionary *dictProfile;
