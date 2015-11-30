@@ -106,8 +106,9 @@
 		11DD18EF1A407B9200781035 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DD18D11A407B9100781035 /* UIKit.framework */; };
 		11DD18F71A407B9200781035 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 11DD18F51A407B9200781035 /* InfoPlist.strings */; };
 		11DD18F91A407B9200781035 /* Voteatlas1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DD18F81A407B9200781035 /* Voteatlas1Tests.m */; };
-		17D515FC1BEA416600044A0C /* FaqsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D515FB1BEA416600044A0C /* FaqsViewController.m */; settings = {ASSET_TAGS = (); }; };
-		17D819391BECEE0D00D5E329 /* UsersListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D819381BECEE0D00D5E329 /* UsersListView.m */; settings = {ASSET_TAGS = (); }; };
+		17BBE25C1C0C65D3000DC87F /* faq.html in Resources */ = {isa = PBXBuildFile; fileRef = 17BBE25B1C0C65D3000DC87F /* faq.html */; };
+		17D515FC1BEA416600044A0C /* FaqsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D515FB1BEA416600044A0C /* FaqsViewController.m */; };
+		17D819391BECEE0D00D5E329 /* UsersListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D819381BECEE0D00D5E329 /* UsersListView.m */; };
 		4E64F6BF5319D955AB102007 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46A385C332818D52BE0ECC3A /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -296,6 +297,7 @@
 		11DD18F41A407B9200781035 /* Voteatlas1Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Voteatlas1Tests-Info.plist"; sourceTree = "<group>"; };
 		11DD18F61A407B9200781035 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		11DD18F81A407B9200781035 /* Voteatlas1Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Voteatlas1Tests.m; sourceTree = "<group>"; };
+		17BBE25B1C0C65D3000DC87F /* faq.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = faq.html; sourceTree = "<group>"; };
 		17D515FA1BEA416600044A0C /* FaqsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaqsViewController.h; sourceTree = "<group>"; };
 		17D515FB1BEA416600044A0C /* FaqsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaqsViewController.m; sourceTree = "<group>"; };
 		17D819371BECEE0C00D5E329 /* UsersListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsersListView.h; sourceTree = "<group>"; };
@@ -888,6 +890,7 @@
 		17D515F91BEA412D00044A0C /* FaqsViewController */ = {
 			isa = PBXGroup;
 			children = (
+				17BBE25B1C0C65D3000DC87F /* faq.html */,
 				17D515FA1BEA416600044A0C /* FaqsViewController.h */,
 				17D515FB1BEA416600044A0C /* FaqsViewController.m */,
 			);
@@ -986,6 +989,7 @@
 			files = (
 				11DD18E61A407B9100781035 /* Images.xcassets in Resources */,
 				11DD18D81A407B9100781035 /* InfoPlist.strings in Resources */,
+				17BBE25C1C0C65D3000DC87F /* faq.html in Resources */,
 				0A98A3411AE52A3400A08BB2 /* SupportOpposeCell.xib in Resources */,
 				11DD18E11A407B9100781035 /* Main.storyboard in Resources */,
 			);

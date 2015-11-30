@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface FaqsViewController : UIViewController
-
+@property (nonatomic, strong) IBOutlet UIWebView *wvFaqs;
 @end
