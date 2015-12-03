@@ -76,11 +76,7 @@
     lblText.textColor = [UIColor darkGrayColor];
     vwHeader.backgroundColor = [UIColor whiteColor];
     [vwHeader addSubview:lblText];
-    if (section == 0) {
-        lblText.text = @"Public support or agree";
-    }else {
-        lblText.text = @"Non Public support or agree";
-    }
+    lblText.text = [self.arrSections objectAtIndex:section];
     return vwHeader;
 }
 
@@ -130,6 +126,7 @@
     NSDictionary *param = @{@"id":[NSNumber numberWithInteger:belief_id]};
     [self.api callGETUrl:param method:@"/api/v1/get_opposed_dispositions" success:^(AFHTTPRequestOperation *task, id responseObject) {
         [self processResponseDataToShow:responseObject];
+        self.arrSections = [[NSMutableArray alloc] initWithArray:@[@"Profiles Not Likeminded",@"Privately Not Likeminded"]];
     }failure:^(AFHTTPRequestOperation *task, NSError *error) {
         [self stopAnimation];
     }];
@@ -140,6 +137,7 @@
     NSDictionary *param = @{@"id":[NSNumber numberWithInteger:belief_id]};
     [self.api callGETUrl:param method:@"/api/v1/get_supported_dispositions" success:^(AFHTTPRequestOperation *task, id responseObject) {
         [self processResponseDataToShow:responseObject];
+        self.arrSections = [[NSMutableArray alloc] initWithArray:@[@"Likeminded Profiles",@"Privately Likeminded"]];
     }failure:^(AFHTTPRequestOperation *task, NSError *error) {
         [self stopAnimation];
     }];
