@@ -228,6 +228,9 @@
 
     self.vScrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.btnOK.frame.origin.y + 95);
     [self stopAnimation];
+    
+    // Load current page when view come from left panel
+    [self viewComeFromLeftPanel];
 }
 
 #pragma mark - Add check box of auther and publish
@@ -656,6 +659,7 @@
   NSMutableString *strCategories = [[NSMutableString alloc]init];
 
   if (self.txtstatement.text.length == 0) {
+    self.segPublishStatement.selectedSegmentIndex = 0;
     UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Please enter statement." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
     [msgAlert show];
     [self stopAnimation];
@@ -668,25 +672,29 @@
       [strCategories  appendString:[NSString stringWithFormat:@"%@,",[NSNumber numberWithInteger:checkBtn.tag]]];
     }
   }
-
+  
+  NSString *strDraftId = self.objDraft.draftId != nil ? self.objDraft.draftId : [NSString stringWithFormat:@"%ld",(long)([[NSDate date] timeIntervalSince1970])];
+    
   NSDictionary *dictStatement = @ {@"statement":self.txtstatement.text,
                                     @"categories":strCategories,
                                     @"language":self.txtlanguage.text,
                                     @"languageId":[NSString stringWithFormat:@"%i",selectedLauguageId],
                                     @"auther":[NSNumber numberWithBool:chkAuthor.checkState],
-                                    @"draftId":[NSString stringWithFormat:@"%ld",(long)([[NSDate date] timeIntervalSince1970])],
+                                    @"draftId":strDraftId,
                                     @"userid": userObject.userid
                                     };
 
   [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
     [Draft entityWithDictionary:dictStatement inContext:localContext];
   } completion:^(BOOL success, NSError *error) {
-
+      [self showSavedAsDraftsAlerts];
   }];
 }
 
 - (void)showDraftInfo:(Draft *)draft {
-
+  
+  self.objDraft = draft;
+    
   self.txtstatement.text = draft.statement;
   self.txtlanguage.text = draft.langName;
   selectedLauguageId = draft.languageId.intValue;
@@ -699,6 +707,20 @@
       checkBtn.checkState = 1;
     }
    }
+}
+
+// Load page when view come from left panel
+- (void)viewComeFromLeftPanel {
+    if (self.isFromLeftMenu) {
+        [self showDraftInfo:self.objDraft];
+        self.navigationItem.rightBarButtonItem = nil;
+    }
+}
+
+- (void)showSavedAsDraftsAlerts {
+    [self.navigationController popViewControllerAnimated:YES];
+    UIAlertView *msgAlert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Successfully saved as draft." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [msgAlert show];
 }
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Draft.h"
 
 @interface BelieveViewController : UIViewController<UITextFieldDelegate> {
 
@@ -42,5 +43,9 @@
 @property(nonatomic,strong)IBOutlet UIScrollView *vScrollView;
 
 -(IBAction)tappedOKButton:(id)sender;
+
+@property(nonatomic, assign) BOOL isFromLeftMenu;
+@property(nonatomic,strong) Draft *objDraft;
+
 
 @end
