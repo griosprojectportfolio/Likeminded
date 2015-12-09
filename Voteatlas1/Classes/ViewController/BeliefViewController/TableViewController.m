@@ -1705,7 +1705,8 @@
 - (void)supportOpposeBtnTapped {
   if([self isauth_Token_Exist]){
   if (isSearch == NO){
-    [self getAllBelievesList];
+    //[self getAllBelievesList];
+      [self viewDidAppear:false];
   }
   }else{
     [self alertMassege];
