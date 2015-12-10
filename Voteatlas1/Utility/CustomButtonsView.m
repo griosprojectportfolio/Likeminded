@@ -124,12 +124,12 @@
 
             BOOL isPublic = [[dictDiscompose valueForKey:@"is_public"]boolValue];
             if (isPublic == 1) {
-                imgVwlockSupport.image = [UIImage imageNamed:@"unlock.png"];
-            } else {
                 imgVwlockSupport.image = [UIImage imageNamed:@"lock.png"];
+            } else {
+                imgVwlockSupport.image = [UIImage imageNamed:@"unlock.png"];
             }
         } else {
-            imgVwlockSupport.image = [UIImage imageNamed:@"lock.png"];
+            imgVwlockSupport.image = [UIImage imageNamed:@"unlock.png"];
         }
     } else {
         if (![[dictDiscompose valueForKey:@"is_trashed"] isKindOfClass:[NSNull class]]) {
@@ -146,12 +146,12 @@
 
             BOOL isPublic = [[dictDiscompose valueForKey:@"is_public"] boolValue];
             if (isPublic == 1) {
-                imgVwlockOppose.image = [UIImage imageNamed:@"unlock.png"];
-            } else {
                 imgVwlockOppose.image = [UIImage imageNamed:@"lock.png"];
+            } else {
+                imgVwlockOppose.image = [UIImage imageNamed:@"unlock.png"];
             }
         } else {
-            imgVwlockOppose.image = [UIImage imageNamed:@"lock.png"];
+            imgVwlockOppose.image = [UIImage imageNamed:@"unlock.png"];
         }
     }
 }
@@ -163,14 +163,14 @@
 
     if ([btnLike.imageView.image isEqual:[UIImage imageNamed:@"4.png"]]) {
 
-        if ([imgVwlockSupport.image isEqual:[UIImage imageNamed:@"lock.png"]]) {
-            [self getApiCallToSupport:@"unlock"];
-        } else if ([imgVwlockSupport.image isEqual:[UIImage imageNamed:@"unlock.png"]]){
+        if ([imgVwlockSupport.image isEqual:[UIImage imageNamed:@"unlock.png"]]) {
+            [self getApiCallToSupport:@"lock"];
+        } else if ([imgVwlockSupport.image isEqual:[UIImage imageNamed:@"lock.png"]]){
             [self getApiCallToSupport:@"transIt"];
         }
     } else {
 
-        [self getApiCallToSupport:@"lock"];
+        [self getApiCallToSupport:@"unlock"];
     }
   }else{
     [self.delegate alertMassegeBtns];
@@ -181,9 +181,9 @@
 - (void)getApiCallToSupport:(NSString*)typeOfLock {
 
     NSDictionary *param;
-    if ([typeOfLock isEqualToString:@"lock"]) {
+    if ([typeOfLock isEqualToString:@"unlock"]) {
         param = @{@"is_supported": [NSNumber numberWithBool:true]};
-    } else if ([typeOfLock isEqualToString:@"unlock"]) {
+    } else if ([typeOfLock isEqualToString:@"lock"]) {
         param = @{ @"is_public": [NSNumber numberWithBool:true]};
     } else {
         param = @{@"is_trashed":[NSNumber numberWithBool:true]};
@@ -212,10 +212,10 @@
 
     if ([btnLike.imageView.image isEqual:[UIImage imageNamed:@"4.png"]]) {
 
-        if ([imgVwlockSupport.image isEqual:[UIImage imageNamed:@"lock.png"]]) {
+        if ([imgVwlockSupport.image isEqual:[UIImage imageNamed:@"unlock.png"]]) {
 
-            imgVwlockSupport.image = [UIImage imageNamed:@"unlock.png"];
-        } else if ([imgVwlockSupport.image isEqual:[UIImage imageNamed:@"unlock.png"]]){
+            imgVwlockSupport.image = [UIImage imageNamed:@"lock.png"];
+        } else if ([imgVwlockSupport.image isEqual:[UIImage imageNamed:@"lock.png"]]){
 
             imgVwlockSupport.hidden = YES;
             [btnLike setImage:[UIImage imageNamed:@"4_unselect.png"] forState:UIControlStateNormal];
@@ -229,7 +229,7 @@
         [btnUnlike setImage:[UIImage imageNamed:@"5_unselect.png"] forState:UIControlStateNormal];
         imgVwlockOppose.hidden = YES;
         imgVwlockSupport.hidden = NO;
-        imgVwlockSupport.image = [UIImage imageNamed:@"lock.png"];
+        imgVwlockSupport.image = [UIImage imageNamed:@"unlock.png"];
     }
 }
 
@@ -240,13 +240,13 @@
   
     if ([btnUnlike.imageView.image isEqual:[UIImage imageNamed:@"5.png"]]) {
 
-        if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"lock.png"]]) {
-            [self opposeApiCall:@"unlock"];
-        } else if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"unlock.png"]]){
+        if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"unlock.png"]]) {
+            [self opposeApiCall:@"lock"];
+        } else if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"lock.png"]]){
             [self opposeApiCall:@"transh"];
         }
     } else {
-        [self opposeApiCall:@"lock"];
+        [self opposeApiCall:@"unlock"];
     }
   }else{
     [self.delegate alertMassegeBtns];
@@ -257,9 +257,9 @@
 - (void)opposeApiCall:(NSString*)typeOfLock{
 
     NSDictionary *param;
-    if ([typeOfLock isEqualToString:@"lock"]) {
+    if ([typeOfLock isEqualToString:@"unlock"]) {
         param = @{@"is_supported": [NSNumber numberWithBool:false]};
-    } else if ([typeOfLock isEqualToString:@"unlock"]) {
+    } else if ([typeOfLock isEqualToString:@"lock"]) {
         param = @{@"is_public": [NSNumber numberWithBool:true]};
     } else {
         param = @{@"is_trashed":[NSNumber numberWithBool:true]};
@@ -288,10 +288,10 @@
 
     if ([btnUnlike.imageView.image isEqual:[UIImage imageNamed:@"5.png"]]) {
 
-        if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"lock.png"]]) {
+        if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"unlock.png"]]) {
 
-            imgVwlockOppose.image = [UIImage imageNamed:@"unlock.png"];
-        } else if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"unlock.png"]]){
+            imgVwlockOppose.image = [UIImage imageNamed:@"lock.png"];
+        } else if ([imgVwlockOppose.image isEqual:[UIImage imageNamed:@"lock.png"]]){
 
             imgVwlockOppose.hidden = YES;
             [btnUnlike setImage:[UIImage imageNamed:@"5_unselect.png"] forState:UIControlStateNormal];
@@ -303,7 +303,7 @@
         [btnLike setImage:[UIImage imageNamed:@"4_unselect.png"] forState:UIControlStateNormal];
         imgVwlockSupport.hidden = YES;
         imgVwlockOppose.hidden = NO;
-        imgVwlockOppose.image = [UIImage imageNamed:@"lock.png"];
+        imgVwlockOppose.image = [UIImage imageNamed:@"unlock.png"];
     }
 }
 
