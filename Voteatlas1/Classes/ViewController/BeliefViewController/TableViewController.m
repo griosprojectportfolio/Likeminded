@@ -999,9 +999,9 @@
   if ([annotation isKindOfClass:[PinAnnotation class]]) {
       // Pin annotation.
     identifier = @"Pin";
-    annotationView = (MKPinAnnotationView *)[mapVwBelief dequeueReusableAnnotationViewWithIdentifier:identifier];
+    annotationView = (MKAnnotationView *)[mapVwBelief dequeueReusableAnnotationViewWithIdentifier:identifier];
     if (annotationView == nil) {
-      annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier];
+      annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier];
     }
     if ([annotation.title isEqualToString:@"support"]) {
       annotationView.image = [UIImage imageNamed:@"greenPin"];

@@ -155,7 +155,7 @@
 
         //Create Years Array from 1960 to This year
     self.arryYears = [[NSMutableArray alloc] init];
-    for (int i=1960; i<=i2; i++) {
+    for (int i=1900; i<=i2; i++) {
         [self.arryYears addObject:[NSString stringWithFormat:@"%d",i]];
     }
 }
