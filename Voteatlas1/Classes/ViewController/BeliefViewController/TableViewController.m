@@ -935,7 +935,7 @@
     dispatch_async(queue, ^ {
       dispatch_async(dispatch_get_main_queue(), ^{
 
-        [self.api callGETUrl:param method:@"/api/v1/map" success:^(AFHTTPRequestOperation *task, id responseObject) {
+        [self.api callGETUrlWithHeaderAuthentication:param method:@"/api/v1/map" success:^(AFHTTPRequestOperation *task, id responseObject) {
           NSDictionary *dictResponse = [responseObject valueForKey:@"data"];
           NSArray *arryOppose = [dictResponse valueForKey:@"belief_oppose"];
 
